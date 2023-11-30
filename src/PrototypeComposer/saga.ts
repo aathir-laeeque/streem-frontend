@@ -102,6 +102,7 @@ function* validatePrototypeSaga({ payload }: ReturnType<typeof validatePrototype
         );
       }
     } else {
+      yield put(setChecklistValidationErrors([]));
       yield put(
         openOverlayAction({
           type: OverlayNames.CHECKLIST_REVIEWER_ASSIGNMENT,
