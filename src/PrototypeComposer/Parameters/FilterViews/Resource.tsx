@@ -408,6 +408,17 @@ const ResourceFormCard: FC<{
     }
   };
 
+  const fieldKeysCorrection = (index: number) => {
+    const updatedFields = {} as Record<string, any>;
+    const keysToInclude = ['field', 'op', 'id', 'fieldType'];
+    Object.keys(fields[index]).forEach((key) => {
+      if (keysToInclude.includes(key)) {
+        updatedFields[key] = fields[index][key];
+      }
+    });
+    fields[index] = updatedFields;
+  };
+
   useEffect(() => {
     if (data?.objectTypeId) {
       fetchObjectType(data.objectTypeId);
@@ -622,6 +633,7 @@ const ResourceFormCard: FC<{
                               isDisabled: isReadOnly,
                               placeholder: 'Select One',
                               onChange: (value: any) => {
+                                fieldKeysCorrection(index);
                                 fields[index] = {
                                   ...fields[index],
                                   selector: value?.value,
