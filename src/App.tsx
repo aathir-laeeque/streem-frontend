@@ -1,3 +1,10 @@
+import Nunito200 from '#assets/fonts/nunito/nunito-v14-latin-200.ttf';
+import Nunito300 from '#assets/fonts/nunito/nunito-v14-latin-300.ttf';
+import Nunito600 from '#assets/fonts/nunito/nunito-v14-latin-600.ttf';
+import Nunito700 from '#assets/fonts/nunito/nunito-v14-latin-700.ttf';
+import Nunito800 from '#assets/fonts/nunito/nunito-v14-latin-800.ttf';
+import Nunito900 from '#assets/fonts/nunito/nunito-v14-latin-900.ttf';
+import Nunito400 from '#assets/fonts/nunito/nunito-v14-latin-regular.ttf';
 import { CustomRoute, Notification, OpenFileUrl, OverlayContainer } from '#components';
 import { MultiTabChecker } from '#components/OverlayContainer/MultiTabChecker';
 import { openOverlayAction } from '#components/OverlayContainer/actions';
@@ -13,6 +20,7 @@ import PrintJobLogs from '#views/Jobs/PrintJobLogs';
 import PrintObjectChangeLogs from '#views/Ontology/PrintObjectChangeLogs/index';
 import PrintSessionActivity from '#views/UserAccess/PrintSessionActivity';
 import { Router } from '@reach/router';
+import { Font } from '@react-pdf/renderer';
 import { enableMapSet } from 'immer';
 import React, { FC, useEffect, useState } from 'react';
 import { Provider } from 'react-redux';
@@ -20,6 +28,19 @@ import { PersistGate } from 'redux-persist/integration/react';
 import { AppVersionCheck } from './AppVersionCheck';
 import { MsalComponent } from './MsalComponent';
 import GlobalStyles from './styles/GlobalStyles';
+
+Font.register({
+  family: 'Nunito',
+  fonts: [
+    { src: Nunito400 },
+    { src: Nunito200, fontWeight: 200 },
+    { src: Nunito300, fontWeight: 300 },
+    { src: Nunito600, fontWeight: 600 },
+    { src: Nunito700, fontWeight: 700 },
+    { src: Nunito800, fontWeight: 800 },
+    { src: Nunito900, fontWeight: 900 },
+  ],
+});
 
 enableMapSet();
 
