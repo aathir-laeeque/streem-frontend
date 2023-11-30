@@ -58,6 +58,10 @@ export function parseJobData(
         parametersErrors: new Map(),
       };
 
+      if (stageId && stageId === stage.id) {
+        _task.parametersErrors = currentState.tasks.get(task.id)?.parametersErrors;
+      }
+
       task?.parameters?.forEach((__parameter) => {
         let parameter = __parameter;
         if (stageId && stageId !== stage.id) {

@@ -20,6 +20,7 @@ import {
   ParameterErrors,
   ParameterExecutionState,
   REFETCH_JOB_ERROR_CODES,
+  StoreParameter,
   StoreTask,
   SupervisorResponse,
   TaskAction,
@@ -161,6 +162,24 @@ export const groupTaskErrors = (errors: ResponseError[]) => {
 
   return { parametersErrors, taskErrors };
 };
+
+function* onSuccessErrorsHandler(parameter: StoreParameter) {
+  try {
+    const { tasks } = (yield select(getJobStore)) as JobStore;
+    const task = tasks.get(parameter.taskId);
+    const updatedParameterErrors = new Map<string, string[]>(task.parametersErrors);
+    updatedParameterErrors.delete(parameter.id);
+    yield put(
+      jobActions.updateTaskErrors({
+        id: parameter.taskId,
+        taskErrors: task.parametersErrors.size === 1 ? [] : task.errors,
+        parametersErrors: updatedParameterErrors,
+      }),
+    );
+  } catch (error) {
+    yield* handleCatch('Job Saga', 'onSuccessErrorsHandler', error);
+  }
+}
 
 // SAGA'S
 
@@ -560,6 +579,7 @@ function* executeParameterSaga({ payload }: ReturnType<typeof jobActions.execute
         data,
       }),
     );
+    yield* onSuccessErrorsHandler(parameter);
   } catch (error) {
     yield* handleCatch('Job', 'executeParameterSaga', error, true);
   } finally {
@@ -603,6 +623,7 @@ function* fixParameterSaga({ payload }: ReturnType<typeof jobActions.fixParamete
         data,
       }),
     );
+    yield* onSuccessErrorsHandler(parameter);
   } catch (error) {
     yield* handleCatch('Job', 'fixParameterSaga', error, true);
   } finally {
