@@ -1,6 +1,7 @@
 import { DEFAULT_PAGE_SIZE } from '#utils/constants';
 import { fetchDataParams, Pageable } from '#utils/globalTypes';
 import { ArrowLeft, ArrowRight } from '@material-ui/icons';
+import { navigate } from '@reach/router';
 import React, { FC } from 'react';
 import styled from 'styled-components';
 
@@ -34,7 +35,7 @@ const PaginationWrapper = styled.div.attrs(({ className = 'pagination', id = 'pa
 export const Pagination: FC<{
   pageable: Pageable;
   pageSize?: number;
-  fetchData: ({ filters, page, size }: fetchDataParams) => void;
+  fetchData?: boolean | (({ filters, page, size }: fetchDataParams) => void);
 }> = ({ pageable, pageSize, fetchData }) => {
   const showPaginationArrows = pageable.totalPages > 10;
 
@@ -44,10 +45,14 @@ export const Pagination: FC<{
         className={`icon ${showPaginationArrows ? '' : 'hide'}`}
         onClick={() => {
           if (pageable.page > 0) {
-            fetchData({
-              page: pageable.page - 1,
-              size: pageSize || pageable.pageSize || DEFAULT_PAGE_SIZE,
-            });
+            if (typeof fetchData === 'boolean') {
+              navigate(`?page=${pageable.page - 1}`, { replace: true });
+            } else {
+              fetchData?.({
+                page: pageable.page - 1,
+                size: pageSize || pageable.pageSize || DEFAULT_PAGE_SIZE,
+              });
+            }
           }
         }}
       />
@@ -57,12 +62,16 @@ export const Pagination: FC<{
           <span
             key={el}
             className={pageable.page === el ? 'active' : ''}
-            onClick={() =>
-              fetchData({
-                page: el,
-                size: pageSize || pageable.pageSize || DEFAULT_PAGE_SIZE,
-              })
-            }
+            onClick={() => {
+              if (typeof fetchData === 'boolean') {
+                navigate(`?page=${el}`, { replace: true });
+              } else {
+                fetchData?.({
+                  page: el,
+                  size: pageSize || pageable.pageSize || DEFAULT_PAGE_SIZE,
+                });
+              }
+            }}
           >
             {el + 1}
           </span>
@@ -71,10 +80,14 @@ export const Pagination: FC<{
         className={`icon ${showPaginationArrows ? '' : 'hide'}`}
         onClick={() => {
           if (pageable.page < pageable.totalPages - 1) {
-            fetchData({
-              page: pageable.page + 1,
-              size: pageSize || pageable.pageSize || DEFAULT_PAGE_SIZE,
-            });
+            if (typeof fetchData === 'boolean') {
+              navigate(`?page=${pageable.page + 1}`, { replace: true });
+            } else {
+              fetchData?.({
+                page: pageable.page + 1,
+                size: pageSize || pageable.pageSize || DEFAULT_PAGE_SIZE,
+              });
+            }
           }
         }}
       />

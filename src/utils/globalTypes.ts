@@ -100,8 +100,8 @@ export enum CustomViewsTargetType {
 }
 
 export type fetchDataParams = {
-  page?: number;
-  size?: number;
+  page?: number | string | null;
+  size?: number | string | null;
   query?: string;
   filters?: FilterField[];
   objectId?: string;

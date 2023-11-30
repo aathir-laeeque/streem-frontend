@@ -13,7 +13,7 @@ import { apiGetObjectTypes } from '#utils/apiUrls';
 import { DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE } from '#utils/constants';
 import { TabContentWrapper } from '#views/Jobs/ListView/styles';
 import { Search } from '@material-ui/icons';
-import { navigate } from '@reach/router';
+import { navigate, useLocation } from '@reach/router';
 import { debounce } from 'lodash';
 import React, { FC, useEffect, useState } from 'react';
 
@@ -25,7 +25,9 @@ const urlParams = {
 
 const ObjectTypeList: FC<TabContentProps> = ({ values }) => {
   const [filters, setFilters] = useState<Record<string, any>>(urlParams);
-
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+  const page = searchParams.get('page');
   const { list, reset, pagination, status } = createFetchList(
     apiGetObjectTypes(),
     urlParams,
@@ -33,8 +35,8 @@ const ObjectTypeList: FC<TabContentProps> = ({ values }) => {
   );
 
   useEffect(() => {
-    reset({ params: { ...filters } });
-  }, [filters]);
+    reset({ params: { ...filters, page } });
+  }, [filters, page]);
 
   return (
     <TabContentWrapper>
@@ -116,10 +118,7 @@ const ObjectTypeList: FC<TabContentProps> = ({ values }) => {
           />
         }
       />
-      <Pagination
-        pageable={pagination}
-        fetchData={(p) => reset({ params: { page: p.page, size: p.size } })}
-      />
+      <Pagination pageable={pagination} fetchData={true} />
     </TabContentWrapper>
   );
 };

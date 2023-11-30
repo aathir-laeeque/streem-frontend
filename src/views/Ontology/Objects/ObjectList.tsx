@@ -36,6 +36,8 @@ import AddEditObjectDrawer from './components/AddEditObjectDrawer';
 const ObjectList: FC<TabContentProps> = () => {
   const dispatch = useDispatch();
   const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+  const page = searchParams.get('page');
   const {
     objectTypes: { active },
     objects: { list, listLoading, pageable },
@@ -46,7 +48,6 @@ const ObjectList: FC<TabContentProps> = () => {
     usageStatus: 1,
   });
   const [showAddEditObjectDrawer, setShowAddEditObjectDrawer] = useState(false);
-  const shouldFetch = useRef(true);
   const properties = active?.properties || [];
   const relations = active?.relations || [];
 
@@ -67,15 +68,8 @@ const ObjectList: FC<TabContentProps> = () => {
   };
 
   useEffect(() => {
-    if (shouldFetch.current) {
-      shouldFetch.current = false;
-      fetchData();
-    }
-
-    return () => {
-      dispatch(resetOntology(['objects', 'listLoading']));
-    };
-  }, [filters]);
+    fetchData({ page });
+  }, [filters, page]);
 
   const createColumnValue = (label: string, item: any, primary = false) =>
     primary ? (
@@ -292,7 +286,6 @@ const ObjectList: FC<TabContentProps> = () => {
               onLabel="Showing Archived"
               checked={filters.usageStatus === 7}
               onChange={(isChecked) => {
-                shouldFetch.current = true;
                 setFilters((currentFilters) => ({
                   ...currentFilters,
                   usageStatus: isChecked ? 7 : 1,
@@ -329,7 +322,7 @@ const ObjectList: FC<TabContentProps> = () => {
             }))}
             emptyTitle="No Objects Found"
           />
-          <Pagination pageable={pageable} fetchData={fetchData} />
+          <Pagination pageable={pageable} fetchData={true} />
           {active && showAddEditObjectDrawer && (
             <AddEditObjectDrawer
               onCloseDrawer={setShowAddEditObjectDrawer}

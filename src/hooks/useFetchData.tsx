@@ -22,7 +22,7 @@ interface CreateFetchListHookState<T> {
 }
 
 type CreateFetchListHookProps = {
-  page?: number;
+  page?: number | string | null;
   size?: number;
   sort?: string;
   filters?: {
