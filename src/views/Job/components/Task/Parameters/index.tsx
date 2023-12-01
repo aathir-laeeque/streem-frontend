@@ -141,7 +141,6 @@ const Wrapper = styled.div.attrs({
       font-weight: 400;
       display: flex;
       align-items: center;
-      pointer-events: all;
       cursor: pointer;
     }
 
