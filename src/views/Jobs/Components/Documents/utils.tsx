@@ -27,7 +27,10 @@ const renderVerificationText = (
   dateAndTimeStampFormat: string,
 ) => {
   const renderOutPutView = (verification: any) => {
-    return verification?.verificationStatus ? (
+    return verification?.verificationStatus &&
+      [ParameterVerificationStatus.ACCEPTED, ParameterVerificationStatus.REJECTED].includes(
+        verification.verificationStatus,
+      ) ? (
       <PdfText style={tableStyles.columnText}>
         {capitalize(type)} Verified by:{' '}
         <PdfText style={{ ...tableStyles.columnText, fontWeight: 600 }}>
