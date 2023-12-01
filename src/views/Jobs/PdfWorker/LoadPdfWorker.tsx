@@ -41,7 +41,7 @@ export const PdfWorkerContainer = ({
         pdfWorker(rest, progressCallback);
       }
     }
-  }, [loading]);
+  }, [loading, rest]);
 
   return (
     <LoadingDiv>
