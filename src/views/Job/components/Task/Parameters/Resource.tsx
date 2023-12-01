@@ -239,7 +239,7 @@ const ResourceParameter: FC<ParameterProps> = ({ parameter, isCorrectingError })
           data: qrData,
           callBack: () => onSelectOption(result),
           objectTypeValidation: qrData?.objectTypeId === parameter?.data?.objectTypeId,
-          filters: propertyFilters.current
+          filters: propertyFilters.current?.op
             ? {
                 op: getFields(propertyFilters.current).op,
                 fields: [
@@ -247,7 +247,7 @@ const ResourceParameter: FC<ParameterProps> = ({ parameter, isCorrectingError })
                   { field: 'id', op: FilterOperators.EQ, values: [qrData?.objectId] },
                 ],
               }
-            : {},
+            : undefined,
         });
       }
     } catch (error) {
