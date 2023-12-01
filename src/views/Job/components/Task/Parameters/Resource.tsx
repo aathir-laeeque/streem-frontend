@@ -5,9 +5,10 @@ import { NotificationType } from '#components/Notification/types';
 import { openOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
 import { useTypedSelector } from '#store';
-import { MandatoryParameter, ParameterMode, StoreParameter } from '#types';
+import { MandatoryParameter, StoreParameter } from '#types';
 import { baseUrl } from '#utils/apiUrls';
 import { FilterField, FilterOperators, ResponseObj } from '#utils/globalTypes';
+import { ObjectIdsDataFromChoices } from '#utils/parameterUtils';
 import { request } from '#utils/request';
 import { jobActions } from '#views/Job/jobStore';
 import { getQrCodeData, qrCodeValidator } from '#views/Ontology/utils';
@@ -19,7 +20,6 @@ import styled from 'styled-components';
 import { customSelectStyles } from './MultiSelect/commonStyles';
 import { Wrapper } from './MultiSelect/styles';
 import { ParameterProps } from './Parameter';
-import { ObjectIdsDataFromChoices } from '#utils/parameterUtils';
 
 const ResourceParameterWrapper = styled.div`
   display: flex;
@@ -48,27 +48,20 @@ const ResourceParameter: FC<ParameterProps> = ({ parameter, isCorrectingError })
     isLoading: Boolean;
     options: any[];
     value: any;
+    isOpen: boolean;
   }>({
     isLoading: false,
     options: [],
     value: null,
+    isOpen: false,
   });
-  const { options, isLoading, value } = state;
+  const { options, isLoading, value, isOpen } = state;
   const pagination = useRef({
     current: -1,
     isLast: false,
   });
 
   const propertyFilters = useRef(null);
-
-  const referencedParameterIds = useRef<string>(
-    propertyFilters.current?.fields?.reduce((acc, currField) => {
-      if (currField?.referencedParameterId) {
-        acc.push(currField.referencedParameterId);
-      }
-      return acc;
-    }, []) || [],
-  );
 
   useEffect(() => {
     if (parameter.autoInitialized) {
@@ -78,19 +71,13 @@ const ResourceParameter: FC<ParameterProps> = ({ parameter, isCorrectingError })
   }, []);
 
   useEffect(() => {
+    if (propertyFilters.current && isOpen) {
+      getOptions(getUrl(0));
+    }
+  }, [propertyFilters.current, isOpen]);
+
+  useEffect(() => {
     propertyFilters.current = getPropertyFilters();
-  }, [parameter.response.variations]);
-
-  const parameterForFiltersValueChange = referencedParameterIds.current?.map((curr) => {
-    const _parameter = parameters?.get(curr);
-    return _parameter?.response?.value || _parameter?.response?.choices;
-  });
-
-  useEffect(() => {
-    if (parameter?.mode !== ParameterMode.READ_ONLY) getOptions(getUrl(0));
-  }, parameterForFiltersValueChange);
-
-  useEffect(() => {
     setState((prev) => ({
       ...prev,
       value: parameter.response.choices?.length
@@ -107,7 +94,7 @@ const ResourceParameter: FC<ParameterProps> = ({ parameter, isCorrectingError })
           }))
         : null,
     }));
-  }, [parameter?.response?.choices]);
+  }, [parameter?.response?.audit?.modifiedAt]);
 
   //  A flag to check if the parameter has variation  from backend
 
@@ -318,6 +305,8 @@ const ResourceParameter: FC<ParameterProps> = ({ parameter, isCorrectingError })
             externalId: option?.externalId,
             option,
           }))}
+          onMenuOpen={() => setState((prev) => ({ ...prev, isOpen: true }))}
+          onMenuClose={() => setState((prev) => ({ ...prev, isOpen: false }))}
           isMulti={parameter.type === MandatoryParameter.MULTI_RESOURCE}
           value={value}
           placeholder="You can select one option here"
