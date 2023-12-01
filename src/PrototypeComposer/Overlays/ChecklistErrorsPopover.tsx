@@ -1,13 +1,13 @@
-import React, { FC } from 'react';
-import { CommonOverlayProps } from '#components/OverlayContainer/types';
-import { Popover } from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
 import closeIcon from '#assets/svg/close-icon.svg';
 import errorIcon from '#assets/svg/error-indicator.svg';
 import navigateIcon from '#assets/svg/external-link-icon.svg';
-import { Error } from '#utils/globalTypes';
-import { navigate } from '@reach/router';
+import { CommonOverlayProps } from '#components/OverlayContainer/types';
 import { useTypedSelector } from '#store/helpers';
+import { Error } from '#utils/globalTypes';
+import { Popover } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core/styles';
+import { navigate } from '@reach/router';
+import React, { FC } from 'react';
 
 const useStyles = makeStyles({
   popover: {},
@@ -74,28 +74,15 @@ const useStyles = makeStyles({
   },
 });
 
-export const ChecklistErrorsPopover: FC<CommonOverlayProps<{ errors: Error[] }>> = ({
-  closeOverlay,
-  popOverAnchorEl,
-  props: { errors },
-}) => {
+export const ChecklistErrorsPopover: FC<
+  CommonOverlayProps<{ errors: (Error & { title: string })[] }>
+> = ({ closeOverlay, popOverAnchorEl, props: { errors } }) => {
   const classes = useStyles();
 
   const {
     stages: { listById: stageListById },
     tasks: { listById: taskListById },
   } = useTypedSelector((state) => state.prototypeComposer);
-
-  const getErrorTitle = (error: Error) => {
-    if (error.entity === 'stage') {
-      return `Stage ${stageListById[error.id]?.orderTree}`;
-    } else if (error.entity === 'task') {
-      const stage = stageListById[taskListById[error.id]?.stageId];
-      return `Task ${stage?.orderTree}.${taskListById[error.id]?.orderTree}`;
-    } else {
-      return '';
-    }
-  };
 
   const handleNavigation = (error: Error) => {
     // E449 - Process contains parameters that are not mapped
@@ -141,7 +128,7 @@ export const ChecklistErrorsPopover: FC<CommonOverlayProps<{ errors: Error[] }>>
             <div key={index} className={classes.error}>
               <img src={errorIcon}></img>
               <div className={classes.errorMessages}>
-                <span className={classes.errorEntity}>{getErrorTitle(error)}</span>
+                <span className={classes.errorEntity}>{error.title}</span>
                 <span className={classes.errorMessage}>{error.message}</span>
               </div>
               <img

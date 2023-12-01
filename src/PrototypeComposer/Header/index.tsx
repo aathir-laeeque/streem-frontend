@@ -72,7 +72,11 @@ const ChecklistHeader: FC<ProcessInitialState> = ({
     selectedFacility: { id: facilityId = '' } = {},
     ssoIdToken,
     checklistErrors,
+    stageListById,
+    taskListById,
   } = useTypedSelector((state) => ({
+    stageListById: state.prototypeComposer.stages.listById,
+    taskListById: state.prototypeComposer.tasks.listById,
     userId: state.auth.userId,
     data: state.prototypeComposer.data as Checklist,
     listOrder: state.prototypeComposer.stages.listOrder,
@@ -515,6 +519,29 @@ const ChecklistHeader: FC<ProcessInitialState> = ({
     }
   };
 
+  const getErrorTitle = (error: Error) => {
+    if (error.entity === 'stage') {
+      const task = stageListById[error.id];
+      return task ? `Stage ${stageListById[error.id]?.orderTree}` : false;
+    } else if (error.entity === 'task') {
+      const stage = stageListById[taskListById[error.id]?.stageId];
+      return stage ? `Task ${stage?.orderTree}.${taskListById[error.id]?.orderTree}` : false;
+    } else {
+      return '';
+    }
+  };
+
+  const parsedErrors = (checklistErrors || []).reduce<Array<any>>((acc, curr) => {
+    const title = getErrorTitle(curr);
+    if (title) {
+      acc.push({
+        ...curr,
+        title,
+      });
+    }
+    return acc;
+  }, []);
+
   return (
     <HeaderWrapper>
       <div className="before-header">
@@ -542,7 +569,7 @@ const ChecklistHeader: FC<ProcessInitialState> = ({
           </div>
 
           <div className="header-content-right">
-            {checklistErrors.length > 0 ? (
+            {parsedErrors.length > 0 ? (
               <div
                 className="error-popover"
                 aria-haspopup="true"
@@ -551,14 +578,14 @@ const ChecklistHeader: FC<ProcessInitialState> = ({
                     openOverlayAction({
                       type: OverlayNames.CHECKLIST_ERRORS,
                       popOverAnchorEl: event.currentTarget,
-                      props: { errors: checklistErrors },
+                      props: { errors: parsedErrors },
                     }),
                   );
                 }}
               >
                 <div className="checklist-errors">
                   <img src={errorIcon} />
-                  <span>{checklistErrors.length} issues found</span>
+                  <span>{parsedErrors.length} issues found</span>
                 </div>
               </div>
             ) : null}
