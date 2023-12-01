@@ -50,9 +50,9 @@ const Download: FC<any> = ({ viewId }) => {
     loadingProcess,
     process,
   } = state;
-  const resourceParameterChoicesMap = useRef(logsResourceChoicesMapper(list));
-  const dispatch = useDispatch();
 
+  const dispatch = useDispatch();
+  const [resourceParameterChoicesMap, setResourceParameterChoicesMap] = useState(null);
   const fetchParameters = async (fields: { field: string; op: string; values: string[] }[]) => {
     const checklistId = fields.find((field) => field.field === 'checklistId')?.values?.[0];
     if (checklistId) {
@@ -198,7 +198,7 @@ const Download: FC<any> = ({ viewId }) => {
 
   useEffect(() => {
     if (list.length) {
-      resourceParameterChoicesMap.current = logsResourceChoicesMapper(list);
+      setResourceParameterChoicesMap(logsResourceChoicesMapper(list));
     }
   }, [list]);
 
@@ -235,7 +235,11 @@ const Download: FC<any> = ({ viewId }) => {
 
   return (
     <>
-      <PdfWorkerContainer loading={state.loadingProcess || loading} {...workerProps} />
+      <PdfWorkerContainer
+        loading={state.loadingProcess || loadingParameters || loading}
+        loadingKeysToCheck={['resourceParameterChoicesMap']}
+        {...workerProps}
+      />
     </>
   );
 };

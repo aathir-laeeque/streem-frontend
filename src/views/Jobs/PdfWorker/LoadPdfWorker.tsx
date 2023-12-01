@@ -21,7 +21,7 @@ export const PdfWorkerContainer = ({
   stageNo?: number;
   loading: boolean;
   profile: User;
-  loadingKeysToCheck?: any;
+  loadingKeysToCheck?: string[];
   dateAndTimeStampFormat: string;
   dateFormat: string;
   timeFormat: string;
@@ -33,7 +33,7 @@ export const PdfWorkerContainer = ({
   useEffect(() => {
     if (!creationStarted.current) {
       const allLoadingsAreFalse = loadingKeysToCheck
-        ? Object.values(loadingKeysToCheck).every((isLoading) => !isLoading)
+        ? loadingKeysToCheck.every((key) => rest[key])
         : true;
 
       if (allLoadingsAreFalse && !loading) {

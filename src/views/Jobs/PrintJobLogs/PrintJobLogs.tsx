@@ -4,7 +4,7 @@ import { logsParser } from '#utils/parameterUtils';
 import { formatDateTime } from '#utils/timeUtils';
 import { Document, Page, StyleSheet, View } from '@react-pdf/renderer';
 import { camelCase, startCase } from 'lodash';
-import React, { FC } from 'react';
+import React, { FC, useRef } from 'react';
 import { FirstPage } from './FirstPage';
 import { PrintContext } from '../PrintJob/PrintContext';
 import { useContext } from 'react';
@@ -164,11 +164,7 @@ export const MyCustomViewJobAuditLogs: FC<any> = ({
     jobLog.logs.forEach((log: any) => {
       acc[index] = {
         ...acc[index],
-        [log.entityId + log.triggerType]: logsParser(
-          log,
-          jobLog.id,
-          resourceParameterChoicesMap.current,
-        ),
+        [log.entityId + log.triggerType]: logsParser(log, jobLog.id, resourceParameterChoicesMap),
       };
     });
     return acc;
