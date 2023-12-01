@@ -20,7 +20,8 @@ import React, { FC, useEffect, useRef, useState } from 'react';
 import { UseFormMethods } from 'react-hook-form';
 import styled from 'styled-components';
 import { v4 as uuidv4 } from 'uuid';
-import { getDateUnits, labelByConstraint } from '../ValidationViews/Resource';
+import { getDateUnits } from '../ValidationViews/Resource';
+import { labelByConstraint } from '#utils';
 
 export const FilterWrapper = styled.div`
   .filters-constraint {

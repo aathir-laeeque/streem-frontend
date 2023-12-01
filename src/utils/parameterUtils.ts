@@ -5,6 +5,7 @@ import {
   TriggerTypeEnum,
 } from '#PrototypeComposer/checklist.types';
 import { MandatoryParameter, Parameter, ParameterVariationType } from '#types';
+import { labelByConstraint } from '#utils';
 import { DEFAULT_VALUE } from '#views/Jobs/PrintJob/constant';
 import { InputTypes } from './globalTypes';
 import { generateShouldBeCriteria } from './stringUtils';
@@ -157,9 +158,9 @@ const getContentString = (
       return details
         ?.map((currDetail: any) => {
           const dependentParameter = parameters[currDetail.parameterId];
-          return `Check if entered value ${parameter.type[currDetail.constraint]} ${
-            currDetail.propertyDisplayName
-          } of selected ${dependentParameter?.label} value`;
+          return `Check if entered value ${
+            labelByConstraint(parameter.type)[currDetail.constraint]
+          } ${currDetail.propertyDisplayName} of selected ${dependentParameter?.label} value`;
         })
         .join(',');
 
@@ -170,7 +171,9 @@ const getContentString = (
               const value = currDetail?.value
                 ? currDetail.value
                 : currDetail.options.map((currOption) => currOption.displayName).join(',');
-              return `Check if ${currDetail.propertyDisplayName} of ${parameter.data.objectTypeDisplayName} ${value}`;
+              return `Check if ${currDetail.propertyDisplayName} of ${
+                parameter.data.objectTypeDisplayName
+              } ${labelByConstraint(parameter.type)[currDetail.constraint]} ${value}`;
             })
             .join(',')
         : details
@@ -188,7 +191,9 @@ const getContentString = (
                 : currDetail?.hasOwnProperty('displayName')
                 ? `${currDetail.displayName} ${currDetail?.externalId ? currDetail.externalId : ''}`
                 : ` ${currDetail.values[0]}`;
-              return `Check if ${parameter.data.objectTypeDisplayName} where ${parameterObjectTypeProperty?.displayName} ${value}`;
+              return `Check if ${parameter.data.objectTypeDisplayName} where ${
+                parameterObjectTypeProperty?.displayName
+              } ${labelByConstraint(parameter.type)[currDetail.op]} ${value}`;
             })
             .join(',');
 

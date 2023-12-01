@@ -81,12 +81,13 @@ export const generateShouldBeCriteria = (data: Record<string, string>) => {
       return '(<) less than';
 
     case 'LESS_THAN_EQUAL_TO':
+      return '(<=) less than and equal to';
 
     case 'MORE_THAN':
       return '(>) more than';
 
     case 'MORE_THAN_EQUAL_TO':
-      return '(≥) more than equal to';
+      return '(>=) more than equal to';
 
     case 'BETWEEN':
       return 'between';

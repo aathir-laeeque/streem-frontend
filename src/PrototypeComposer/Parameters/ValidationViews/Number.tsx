@@ -9,8 +9,9 @@ import { AddCircleOutline, Close } from '@material-ui/icons';
 import { keyBy } from 'lodash';
 import React, { FC, useEffect, useRef, useState } from 'react';
 import { UseFormMethods } from 'react-hook-form';
-import { labelByConstraint, ValidationWrapper } from './Resource';
+import { ValidationWrapper } from './Resource';
 import { v4 as uuidv4 } from 'uuid';
+import { labelByConstraint } from '#utils';
 
 type NumberValidationState = {
   isLoadingObjectType: Record<number, boolean>;

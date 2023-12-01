@@ -1,4 +1,3 @@
-import { labelByConstraint } from '#PrototypeComposer/Parameters/ValidationViews/Resource';
 import backIcon from '#assets/svg/back-icon.svg';
 import {
   BaseModal,
@@ -16,7 +15,7 @@ import { CommonOverlayProps, OverlayNames } from '#components/OverlayContainer/t
 import { createFetchList } from '#hooks/useFetchData';
 import { useTypedSelector } from '#store';
 import { Job, MandatoryParameter, Parameter, ParameterVariationType } from '#types';
-import { openLinkInNewTab } from '#utils';
+import { labelByConstraint, openLinkInNewTab } from '#utils';
 import {
   apiArchiveParameterVariation,
   apiGetObjectTypes,

@@ -1,4 +1,5 @@
 import { Button, FormGroup } from '#components';
+import { labelByConstraint } from '#utils';
 import { apiGetObjectTypes } from '#utils/apiUrls';
 import { InputTypes, ResponseObj } from '#utils/globalTypes';
 import { request } from '#utils/request';
@@ -71,37 +72,6 @@ export const ValidationWrapper = styled.div`
     z-index: 2;
   }
 `;
-
-export const labelByConstraint = (inputType: InputTypes) => {
-  switch (inputType) {
-    case InputTypes.DATE:
-    case InputTypes.TIME:
-    case InputTypes.DATE_TIME:
-      return {
-        [Constraint.LTE]: 'not older than',
-        [Constraint.GTE]: 'not later than',
-      };
-    case InputTypes.SINGLE_LINE:
-    case InputTypes.MULTI_LINE:
-    case InputTypes.SINGLE_SELECT:
-    case InputTypes.MULTI_SELECT:
-    case InputTypes.ONE_TO_ONE:
-    case InputTypes.ONE_TO_MANY:
-      return {
-        [Constraint.EQ]: 'is equal to',
-        [Constraint.NE]: 'is not equal to',
-      };
-    default:
-      return {
-        [Constraint.EQ]: 'is equal to',
-        [Constraint.NE]: 'is not equal to',
-        [Constraint.LT]: 'is less than',
-        [Constraint.GT]: 'is more than',
-        [Constraint.LTE]: 'is less than equal to',
-        [Constraint.GTE]: 'is more than equal to',
-      };
-  }
-};
 
 export const getDateUnits = (inputType: InputTypes) => {
   switch (inputType) {
