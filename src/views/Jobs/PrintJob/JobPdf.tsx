@@ -36,6 +36,7 @@ export const JobPdf: FC<any> = ({
   data,
   hiddenIds,
   renderInitialPage = false,
+  variationData,
 }) => {
   const { checklist, code } = data;
 
@@ -49,6 +50,7 @@ export const JobPdf: FC<any> = ({
         profile,
         extra: {
           hiddenIds,
+          variationData,
         },
       }}
     >

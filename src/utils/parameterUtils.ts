@@ -4,9 +4,10 @@ import {
   AutomationActionTriggerTypeVisual,
   TriggerTypeEnum,
 } from '#PrototypeComposer/checklist.types';
-import { MandatoryParameter } from '#types';
+import { MandatoryParameter, Parameter, ParameterVariationType } from '#types';
 import { DEFAULT_VALUE } from '#views/Jobs/PrintJob/constant';
 import { InputTypes } from './globalTypes';
+import { generateShouldBeCriteria } from './stringUtils';
 import { formatDateTime } from './timeUtils';
 
 export const responseDetailsForChoiceBasedParameters = ({ data, response }: any) => {
@@ -98,8 +99,16 @@ export const getAutomationActionTexts = (
   } when the ${AutomationActionTriggerTypeVisual[automation.triggerType]}.`;
 };
 
-export const getParameters = ({ checklist }: { checklist: any }) => {
+export const getParameters = ({
+  checklist,
+  parameterValues,
+}: {
+  checklist: any;
+  parameterValues: any;
+}) => {
   const hiddenIds: Record<string, boolean> = {};
+  const parameters = {};
+  const variationDetails = {};
   checklist?.stages?.map((stage: any) => {
     let hiddenTasksLength = 0;
     stage?.tasks?.map((task: any) => {
@@ -109,6 +118,14 @@ export const getParameters = ({ checklist }: { checklist: any }) => {
           hiddenParametersLength++;
           hiddenIds[parameter.id] = true;
         }
+        if (parameter?.response?.variations?.length) {
+          variationDetails[parameter.id] = {
+            data: parameter?.response?.variations,
+            location: `Task ${stage?.orderTree}.${task?.orderTree}`,
+            parameterId: parameter.id,
+          };
+        }
+        parameters[parameter.id] = parameter;
       });
       if (task?.parameters?.length === hiddenParametersLength) {
         hiddenTasksLength++;
@@ -120,7 +137,120 @@ export const getParameters = ({ checklist }: { checklist: any }) => {
     }
   });
 
-  return { hiddenIds };
+  // Add ParameterValues
+  (parameterValues || []).map((parameter) => {
+    parameters[parameter.id] = parameter;
+  });
+
+  return { hiddenIds, parameters, variationDetails };
+};
+
+const getContentString = (
+  details: any[],
+  parameter: Parameter,
+  isValidation: boolean = false,
+  parameters: Parameter[],
+  objectTypesList: [],
+) => {
+  switch (parameter.type) {
+    case MandatoryParameter.NUMBER:
+      return details
+        ?.map((currDetail: any) => {
+          const dependentParameter = parameters[currDetail.parameterId];
+          return `Check if entered value ${parameter.type[currDetail.constraint]} ${
+            currDetail.propertyDisplayName
+          } of selected ${dependentParameter?.label} value`;
+        })
+        .join(',');
+
+    case MandatoryParameter.RESOURCE:
+      return isValidation
+        ? details
+            ?.map((currDetail: any) => {
+              const value = currDetail?.value
+                ? currDetail.value
+                : currDetail.options.map((currOption) => currOption.displayName).join(',');
+              return `Check if ${currDetail.propertyDisplayName} of ${parameter.data.objectTypeDisplayName} ${value}`;
+            })
+            .join(',')
+        : details
+            ?.map((currDetail: any) => {
+              const dependentParameter = parameters[currDetail.referencedParameterId];
+              const parameterObjectType = objectTypesList?.find(
+                (currObjectType) => currObjectType.id === parameter?.data.objectTypeId,
+              );
+              const parameterObjectTypeProperty = [
+                ...(parameterObjectType?.properties || []),
+                ...(parameterObjectType?.relations || []),
+              ].find((currProperty) => currProperty.id === currDetail?.field?.split('.')[1]);
+              const value = dependentParameter
+                ? `the selected ${dependentParameter.label} value`
+                : currDetail?.hasOwnProperty('displayName')
+                ? `${currDetail.displayName} ${currDetail?.externalId ? currDetail.externalId : ''}`
+                : ` ${currDetail.values[0]}`;
+              return `Check if ${parameter.data.objectTypeDisplayName} where ${parameterObjectTypeProperty?.displayName} ${value}`;
+            })
+            .join(',');
+
+    default:
+      return '';
+  }
+};
+
+const generateVariationDetailText = (
+  details: any[],
+  type: string,
+  parameterId: string,
+  parameters,
+  objectTypesList: [],
+) => {
+  const parameterData = parameters[parameterId];
+  switch (type) {
+    case ParameterVariationType.FILTER:
+      return getContentString(details, parameterData, false, parameters, objectTypesList);
+    case ParameterVariationType.VALIDATION:
+      return getContentString(details, parameterData, true, parameters, objectTypesList);
+    case ParameterVariationType.SHOULD_BE:
+      const detail = Array.isArray(details) ? details[0] : details;
+      const uom = detail?.uom || '';
+      const value =
+        detail.operator === 'BETWEEN'
+          ? `${detail.lowerValue} ${uom} and ${detail.upperValue} ${uom}`
+          : `${detail.value} ${uom}`;
+      return `Check if entered value is ${generateShouldBeCriteria(detail)} ${value}`;
+  }
+};
+
+export const generateVariationData = (variationDetails, parameters, objectTypesList) => {
+  const updatedData = Object.keys(variationDetails)?.map((key) => {
+    const obj = variationDetails[key]?.data[0];
+    const parameterId = variationDetails[key]?.parameterId;
+    const location = variationDetails[key]?.location;
+
+    return {
+      ...obj,
+      location: location,
+      oldVariationString: obj.oldVariation
+        ? generateVariationDetailText(
+            obj.oldVariation,
+            obj.type,
+            parameterId,
+            parameters,
+            objectTypesList,
+          )
+        : DEFAULT_VALUE,
+      newVariationString: obj.newVariation
+        ? generateVariationDetailText(
+            obj.newVariation,
+            obj.type,
+            parameterId,
+            parameters,
+            objectTypesList,
+          )
+        : DEFAULT_VALUE,
+    };
+  });
+  return updatedData;
 };
 
 export const fileTypeCheck = (collectionOfTypes: string[] = [], type: string) => {

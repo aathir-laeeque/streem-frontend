@@ -1,11 +1,19 @@
 import { MandatoryParameter, Media } from '#PrototypeComposer/checklist.types';
-import { PdfLabelGroup, PdfTab, PdfText, commonPdfStyles } from '#components/documents';
+import {
+  PdfLabelGroup,
+  PdfTab,
+  PdfTable,
+  PdfText,
+  commonPdfStyles,
+  tableStyles,
+} from '#components/documents';
 import { getUserName } from '#services/users/helpers';
 import { Job, JobStates, PartialUser } from '#types';
 import { getParameterContent } from '#utils/parameterUtils';
 import { formatDateTime, formatDuration } from '#utils/timeUtils';
 import { Link, View } from '@react-pdf/renderer';
-import React from 'react';
+import React, { useContext } from 'react';
+import { PrintContext } from '../../PrintJob/PrintContext';
 
 export type PdfJobDataType = Job & {
   createdAt: number;
@@ -45,6 +53,43 @@ export const CommonJobPdfDetails = ({
     totalStages,
     parameterValues,
   } = jobPdfData;
+
+  const {
+    extra: { variationData },
+  } = useContext(PrintContext);
+
+  const getColumnData = (object, id) => {
+    return object[id];
+  };
+
+  const getColumnNames = () => {
+    return [
+      { id: 'value', name: 'Parameter Name', value: 'parameterName' },
+      { id: 'value', name: 'Variation Name', value: 'name' },
+      { id: 'value', name: 'Variation Number', value: 'variationNumber' },
+      { id: 'value', name: 'Location', value: 'location' },
+      { id: 'value', name: 'Variation Type', value: 'type' },
+      { id: 'value', name: 'Value Before', value: 'oldVariationString' },
+      { id: 'value', name: 'Value After', value: 'newVariationString' },
+    ];
+  };
+
+  const getColumnValues = () => {
+    let arr: any = [];
+
+    variationData?.map((object, index) => {
+      arr.push({
+        value: (data) => {
+          return (
+            <PdfText style={tableStyles.columnText}>{getColumnData(object, data.value)}</PdfText>
+          );
+        },
+        id: index,
+      });
+    });
+
+    return arr;
+  };
 
   const getJobStatus = (state: JobStates) => {
     const isJobBlocked = state === 'BLOCKED';
@@ -177,6 +222,12 @@ export const CommonJobPdfDetails = ({
           <PdfLabelGroup label="Total Tasks" value={totalTask.toString()} />
         </View>
       </PdfTab>
+      {variationData && Object.keys(variationData)?.length > 0 && (
+        <View>
+          <PdfText style={tableStyles.headerText}>Variation Data :</PdfText>
+          <PdfTable columns={getColumnNames()} data={getColumnValues()} />
+        </View>
+      )}
     </View>
   );
 };

@@ -64,8 +64,8 @@ export const getFileExtension = (filename: string) => {
 };
 
 export const generateShouldBeText = (label: string | undefined, data: any) => {
-  const uom = data.uom || '';
-  if (data.operator === 'BETWEEN') {
+  const uom = data?.uom || '';
+  if (data?.operator === 'BETWEEN') {
     return `${label} should be between ${data.lowerValue} ${uom} and ${data.upperValue} ${uom}`;
   } else {
     let operatorString = generateShouldBeCriteria(data);
@@ -74,7 +74,7 @@ export const generateShouldBeText = (label: string | undefined, data: any) => {
 };
 
 export const generateShouldBeCriteria = (data: Record<string, string>) => {
-  switch (data.operator) {
+  switch (data?.operator) {
     case 'EQUAL_TO':
       return '(=) equal to';
     case 'LESS_THAN':

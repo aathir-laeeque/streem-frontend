@@ -1,14 +1,17 @@
 import { ProgressBar } from '#components';
 import { useTypedSelector } from '#store';
 import { setKeepPersistedData } from '#utils';
-import { apiPrintJobDetails } from '#utils/apiUrls';
-import { getParameters } from '#utils/parameterUtils';
+import { apiGetObjectTypes, apiPrintJobDetails } from '#utils/apiUrls';
+import { generateVariationData, getParameters, getVariationData } from '#utils/parameterUtils';
 import { request } from '#utils/request';
 import React, { FC, useEffect, useRef, useState } from 'react';
 import { PdfJobDataType } from '../Components/Documents/CommonJobPDFDetails';
 import { PdfWorkerContainer } from '../PdfWorker/LoadPdfWorker';
 import { PrintJobProps } from './types';
-import { COMPLETED_JOB_STATES } from '#types';
+import { COMPLETED_JOB_STATES, MandatoryParameter } from '#types';
+import { createFetchList } from '#hooks/useFetchData';
+import { objectTypesUrlParams } from '#views/Job/overlays/ParameterVariationContent';
+import { FilterOperators } from '#utils/globalTypes';
 
 const Download: FC<PrintJobProps> = ({ jobId }) => {
   const { profile, settings, selectedFacility } = useTypedSelector((state) => state.auth);
@@ -20,7 +23,41 @@ const Download: FC<PrintJobProps> = ({ jobId }) => {
   const [stageNo, setStageNo] = useState<number>();
   const [data, setData] = useState<PdfJobDataType | undefined>();
   const [hiddenIds, setHiddenIds] = useState({});
+  const objectTypeIds = useRef<string[]>([]);
+  const [variationData, setVariationData] = useState({});
+  const { parameters } = useTypedSelector((state) => state.job);
+  const {
+    list: objectTypesList,
+    reset: resetObjectTypesList,
+    status: objectTypesListStatus,
+  } = createFetchList(apiGetObjectTypes(), objectTypesUrlParams, false);
   const isInitiated = useRef(false);
+  const [apiData, setApiData] = useState({});
+  const [loading, setLoading] = useState(true);
+
+  const getObjectTypeIdsForResourceParameters = (list, parameters) => {
+    Object.values(list)?.map((item) => {
+      if (item.data[0].parameterType === MandatoryParameter.RESOURCE) {
+        const parameter = item && parameters[item.data[0].parameterId];
+        if (parameter) {
+          objectTypeIds.current.push(parameter.data.objectTypeId);
+        }
+      }
+    });
+
+    if (objectTypeIds.current.length > 0) {
+      resetObjectTypesList({
+        params: {
+          ...objectTypesUrlParams,
+          size: objectTypeIds.current.length,
+          filters: {
+            op: FilterOperators.AND,
+            fields: [{ field: 'id', op: FilterOperators.ANY, values: objectTypeIds.current }],
+          },
+        },
+      });
+    }
+  };
 
   useEffect(() => {
     if (!isInitiated.current) {
@@ -32,10 +69,21 @@ const Download: FC<PrintJobProps> = ({ jobId }) => {
             'GET',
             apiPrintJobDetails(jobId!),
           );
+          const { parameters, hiddenIds, variationDetails } = getParameters({
+            checklist: response?.data?.checklist,
+            parameterValues: response?.data?.parameterValues,
+          });
           if (response.data.state in COMPLETED_JOB_STATES) {
-            setHiddenIds(getParameters({ checklist: response.data.checklist }).hiddenIds);
+            setHiddenIds(hiddenIds);
           }
+          setApiData({ parameters, hiddenIds, variationDetails });
+          getObjectTypeIdsForResourceParameters(variationDetails, parameters);
           setData(response.data);
+          if (objectTypeIds.current.length === 0) {
+            const variationPayload = generateVariationData(variationDetails, parameters, []);
+            setVariationData(variationPayload);
+            setLoading(false);
+          }
         } catch (err) {
           console.error('error from fetch job PDF data api ==>', err);
         }
@@ -46,6 +94,15 @@ const Download: FC<PrintJobProps> = ({ jobId }) => {
       }
     }
   }, [jobId]);
+
+  useEffect(() => {
+    const { parameters, variationDetails } = apiData;
+    if (parameters && variationDetails && objectTypesList?.length > 0) {
+      const variationPayload = generateVariationData(variationDetails, parameters, objectTypesList);
+      setVariationData(variationPayload);
+      setLoading(false);
+    }
+  }, [objectTypesList]);
 
   const progressCallback = (val: any, name: string, stageNum: number) => {
     setProgressName(name);
@@ -63,6 +120,9 @@ const Download: FC<PrintJobProps> = ({ jobId }) => {
     timeFormat,
     dateFormat,
     data,
+    variationData,
+    parameters,
+    objectTypesList,
     type: 'JOB',
     progressCallback,
   };
@@ -70,7 +130,7 @@ const Download: FC<PrintJobProps> = ({ jobId }) => {
   return (
     <>
       <PdfWorkerContainer
-        loading={!!!data}
+        loading={loading}
         progress={progress}
         progressName={progressName}
         stageNo={stageNo}

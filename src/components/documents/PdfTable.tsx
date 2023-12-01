@@ -13,7 +13,7 @@ export const tableStyles = StyleSheet.create({
     flexDirection: 'row',
   },
   column: {
-    width: '50%',
+    flex: 1,
     overflow: 'hidden',
     borderWidth: 0.5,
     borderColor: '#000',
@@ -71,7 +71,7 @@ export const PdfTable: FC<TPdfTable> = ({ data, columns }) => {
                   {typeof row[column.id] === 'string' ? (
                     <PdfText style={tableStyles.columnText}>{row[column.id]}</PdfText>
                   ) : (
-                    row[column.id]()
+                    row[column.id](column)
                   )}
                 </View>
               );

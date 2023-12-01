@@ -73,7 +73,7 @@ const urlParams = {
   size: DEFAULT_PAGE_SIZE,
 };
 
-const objectTypesUrlParams = {
+export const objectTypesUrlParams = {
   ...urlParams,
   usageStatus: 1,
   filters: {
