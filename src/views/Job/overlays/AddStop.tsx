@@ -82,7 +82,7 @@ const TaskStopModal: FC<CommonOverlayProps<{ id: string }>> = ({
             Stop
           </div>
           <div className="body">
-            {`You need to complete Task No.${taskNumber} in Stage No. ${stageNumber} before coming to this task`}
+            {`You need to complete Task No. ${stageNumber}.${taskNumber} in Stage No. ${stageNumber} before coming to this task`}
           </div>
           <div
             className="footer"
