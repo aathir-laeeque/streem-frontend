@@ -1,14 +1,15 @@
-import { DEFAULT_PAGE_SIZE, DEFAULT_PAGINATION } from '#utils/constants';
+import { DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE, DEFAULT_PAGINATION } from '#utils/constants';
 import { customOnChange } from '#utils/formEvents';
 import { Pageable, fetchDataParams } from '#utils/globalTypes';
 import MenuItem from '@material-ui/core/MenuItem';
 import Select, { SelectProps } from '@material-ui/core/Select';
 import { makeStyles } from '@material-ui/core/styles';
 import { NavigateBefore, NavigateNext, Search } from '@material-ui/icons';
-import { get } from 'lodash';
+import { debounce, get } from 'lodash';
 import React, { FC, useEffect, useRef, useState } from 'react';
 import { Props, StylesConfig } from 'react-select';
 import styled from 'styled-components';
+import { TextInput } from './Input';
 import { Select as CustomSelect } from './Select';
 
 const PopOutWrapper = styled.div.attrs({
@@ -45,6 +46,14 @@ const StyledSelect = styled(Select)<{ width: string }>`
   .MuiList-padding {
     padding-top: 0px;
     padding-bottom: 0px;
+  }
+
+  .nested-select-search {
+    padding: 8px 12px;
+  }
+  .nested-select-search > div {
+    background-color: #f4f4f4;
+    border: 2px solid;
   }
 `;
 
@@ -406,7 +415,7 @@ export const NestedSelect: FC<NestedSelectProps> = ({
       fetchData &&
       pagination &&
       !pagination.last &&
-      scrollHeight - scrollTop - clientHeight <= 0
+      scrollHeight - scrollTop - clientHeight <= 0.8
     ) {
       fetchData({
         page: pagination?.page + 1,
@@ -446,11 +455,28 @@ export const NestedSelect: FC<NestedSelectProps> = ({
       open={openSelect}
       onOpen={(e) => {
         e.stopPropagation();
+        fetchData?.({ page: DEFAULT_PAGE_NUMBER });
         setState((prev) => ({ ...prev, openSelect: true }));
       }}
       onClose={onClose}
       {...restStyledSelectProps}
     >
+      {fetchData && !openPopOut && (
+        <TextInput
+          className="nested-select-search"
+          autoFocus
+          placeholder="Search..."
+          onKeyDown={(e) => {
+            e.stopPropagation();
+          }}
+          afterElementClass="search-bar"
+          afterElementWithoutError={true}
+          AfterElement={Search}
+          onChange={debounce(({ value }) => {
+            fetchData({ query: value, page: DEFAULT_PAGE_NUMBER });
+          }, 500)}
+        />
+      )}
       <MenuTree
         items={items}
         onChildChange={handleOnChildChange}

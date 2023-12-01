@@ -1,15 +1,14 @@
 import { NestedSelect, NestedSelectProps } from '#components';
-import { useTypedSelector } from '#store';
+import { createFetchList } from '#hooks/useFetchData';
+import { apiGetObjectTypes } from '#utils/apiUrls';
 import { DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE } from '#utils/constants';
 import { FilterOperators, fetchDataParams } from '#utils/globalTypes';
-import { fetchObjectTypes } from '#views/Ontology/actions';
 import { Object } from '#views/Ontology/types';
 import { getObjectPartialCall } from '#views/Ontology/utils';
 import { ExpandMore } from '@material-ui/icons';
 import ClearIcon from '@material-ui/icons/Clear';
 import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
 import React, { useEffect, useState } from 'react';
-import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 
 const ResourceFilterWrapper = styled.div`
@@ -48,12 +47,6 @@ const ResourceFilterWrapper = styled.div`
 `;
 
 export const ResourceFilter = ({ onChange, onClear }: any) => {
-  const dispatch = useDispatch();
-  const {
-    ontology: {
-      objectTypes: { list, listLoading, pageable: objectTypePagination },
-    },
-  } = useTypedSelector((state) => state);
   const [state, setState] = useState<{
     selectedResource?: Object;
     resourceOptions: NestedSelectProps['items'];
@@ -61,11 +54,21 @@ export const ResourceFilter = ({ onChange, onClear }: any) => {
     resourceOptions: {},
   });
 
-  const { resourceOptions, selectedResource } = state;
+  const {
+    list,
+    reset,
+    pagination: objectTypePagination,
+    status,
+    fetchNext,
+  } = createFetchList(
+    apiGetObjectTypes(),
+    {
+      usageStatus: 1,
+    },
+    false,
+  );
 
-  useEffect(() => {
-    fetchResourcesData();
-  }, []);
+  const { resourceOptions, selectedResource } = state;
 
   useEffect(() => {
     if (list.length) {
@@ -105,22 +108,21 @@ export const ResourceFilter = ({ onChange, onClear }: any) => {
         return acc;
       }, {});
       setState((prev) => ({ ...prev, resourceOptions: listOptions }));
+    } else {
+      setState((prev) => ({
+        ...prev,
+        resourceOptions: { 'no-options': { label: 'No Options', options: [] } },
+      }));
     }
   }, [list]);
 
   const fetchResourcesData = (params: fetchDataParams = {}) => {
-    const { page = DEFAULT_PAGE_NUMBER, size = 250 } = params;
-
-    dispatch(
-      fetchObjectTypes(
-        {
-          page,
-          size,
-          usageStatus: 1,
-        },
-        true,
-      ),
-    );
+    const { query, page = DEFAULT_PAGE_NUMBER, ...rest } = params;
+    if (page > 0) {
+      fetchNext();
+    } else {
+      reset({ params: { ...rest, displayName: query, usageStatus: 1, page } });
+    }
   };
 
   const ResourceFilterLabel = () => {
@@ -135,7 +137,7 @@ export const ResourceFilter = ({ onChange, onClear }: any) => {
         </div>
         <div className="resource-filter-icons">
           {selectedResource?.id && <ClearIcon onMouseDown={onClearAll} />}
-          {listLoading && <MoreHorizIcon />}
+          {status === 'loading' && <MoreHorizIcon />}
           <ExpandMore />
         </div>
       </ResourceFilterWrapper>
