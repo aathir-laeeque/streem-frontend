@@ -11,60 +11,20 @@ export const Wrapper = styled.div`
   .editor-class {
     overflow-wrap: break-word;
     background-color: #fff;
-    padding: 8px 12px;
+    border: 1px solid #bababa;
+    padding: 0 16px;
+    pointer-events: none;
 
     * {
       font-weight: unset;
-    }
-  }
-
-  .toolbar-class {
-    align-items: center;
-    background-color: #f4f4f4;
-    display: flex;
-    margin-bottom: 0;
-    padding: 4px 8px;
-
-    > div:nth-child(1n) {
-      border-bottom: 0;
-      border-right: 1px solid #666666;
-      margin-bottom: 0;
-
-      > div {
-        background: transparent;
-      }
-
-      .rdw-emoji-modal {
-        background: #ffffff;
-        height: auto;
-        width: 294px;
-        padding: 10px;
-
-        .rdw-emoji-icon {
-          padding: 4px;
-          margin: unset;
-          height: 34px;
-          width: 34px;
-        }
-      }
-
-      :last-child {
-        border-right: none;
-        padding-right: 0;
-      }
-    }
-  }
-
-  .editor-class {
-    border: 1px solid #bababa;
-    padding: 0 16px;
-
-    :active {
-      border-color: #1d84ff;
     }
 
     .public-* {
       margin: 0;
     }
+  }
+
+  .toolbar-class {
+    display: none;
   }
 `;
