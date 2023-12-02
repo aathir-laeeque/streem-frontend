@@ -4,7 +4,15 @@ import {
   AutomationActionTriggerTypeVisual,
   TriggerTypeEnum,
 } from '#PrototypeComposer/checklist.types';
-import { MandatoryParameter, Parameter, ParameterVariationType } from '#types';
+import {
+  Checklist,
+  MandatoryParameter,
+  Parameter,
+  ParameterVariationType,
+  Stage,
+  Task,
+  TaskExecution,
+} from '#types';
 import { labelByConstraint } from '#utils';
 import { DEFAULT_VALUE } from '#views/Jobs/PrintJob/constant';
 import { InputTypes } from './globalTypes';
@@ -107,18 +115,11 @@ export const getParameters = ({
   checklist: any;
   parameterValues: any;
 }) => {
-  const hiddenIds: Record<string, boolean> = {};
   const parameters = {};
   const variationDetails = {};
   checklist?.stages?.map((stage: any) => {
-    let hiddenTasksLength = 0;
     stage?.tasks?.map((task: any) => {
-      let hiddenParametersLength = 0;
       task?.parameters?.map((parameter: any) => {
-        if (parameter.response?.hidden) {
-          hiddenParametersLength++;
-          hiddenIds[parameter.id] = true;
-        }
         if (parameter?.response?.variations?.length) {
           variationDetails[parameter.id] = {
             data: parameter?.response?.variations,
@@ -128,14 +129,7 @@ export const getParameters = ({
         }
         parameters[parameter.id] = parameter;
       });
-      if (task?.parameters?.length === hiddenParametersLength) {
-        hiddenTasksLength++;
-        hiddenIds[task.id] = true;
-      }
     });
-    if (stage?.tasks?.length === hiddenTasksLength) {
-      hiddenIds[stage.id] = true;
-    }
   });
 
   // Add ParameterValues
@@ -143,7 +137,75 @@ export const getParameters = ({
     parameters[parameter.id] = parameter;
   });
 
-  return { hiddenIds, parameters, variationDetails };
+  return { parameters, variationDetails };
+};
+
+export const getTransformedTasks = (checklist: Checklist) => {
+  const transformedTasks = new Map();
+  const hiddenIds: Record<string, boolean> = {};
+
+  checklist.stages.forEach((stage: Stage) => {
+    let visibleTasksCount = 0;
+    stage.tasks.forEach((task: Task) => {
+      let visibleTaskExecutionsCount = 0;
+      task.parameters.forEach((parameter: Parameter) => {
+        parameter.response.forEach((res) => {
+          let taskExecution = transformedTasks.get(res.taskExecutionId) || {
+            stageId: stage.id,
+            ...task,
+            parameters: [
+              ...(transformedTasks.get(res.taskExecutionId)?.parameters || []),
+              {
+                ...parameter,
+                response: res,
+              },
+            ],
+            taskExecutions: undefined,
+            visibleParametersCount: 0,
+          };
+
+          if (res.hidden) {
+            hiddenIds[res.id] = true;
+          } else {
+            taskExecution.visibleParametersCount++;
+          }
+
+          transformedTasks.set(res.taskExecutionId, taskExecution);
+        });
+      });
+
+      task.taskExecutions.forEach((taskExecution: TaskExecution) => {
+        let _taskExecution = transformedTasks.get(taskExecution.id) || {
+          ...task,
+          stageId: stage.id,
+          taskExecution,
+          taskExecutions: undefined,
+        };
+
+        if (_taskExecution.visibleParametersCount === 0) {
+          hiddenIds[taskExecution.id] = true;
+        } else {
+          visibleTaskExecutionsCount++;
+        }
+
+        transformedTasks.set(taskExecution.id, {
+          ..._taskExecution,
+          taskExecution,
+          taskExecutions: undefined,
+        });
+      });
+
+      if (visibleTaskExecutionsCount !== 0) {
+        visibleTasksCount++;
+      }
+    });
+
+    if (visibleTasksCount === 0) {
+      hiddenIds[stage.id] = true;
+    }
+  });
+
+  return { transformedTasks, hiddenIds };
 };
 
 const getContentString = (

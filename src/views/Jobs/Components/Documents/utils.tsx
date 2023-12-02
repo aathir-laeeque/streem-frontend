@@ -234,7 +234,7 @@ export const isParameterNeeded = (parameter: Parameter, hiddenIds: Record<string
   ) {
     return false;
   }
-  if (hiddenIds[parameter.id]) {
+  if (hiddenIds[parameter.response?.id]) {
     return false;
   }
   return true;

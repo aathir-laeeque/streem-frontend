@@ -1,4 +1,5 @@
 import { TaskExecutionState } from '#PrototypeComposer/checklist.types';
+import { TaskExecutionType } from '../../../../src/types/task';
 import { Task } from '#types';
 import { formatDateTime, formatDuration } from '#utils/timeUtils';
 import { Image, Link, StyleSheet, View } from '@react-pdf/renderer';
@@ -58,6 +59,7 @@ const MemoTask: FC<{
     correctionReason,
     startedBy,
     endedBy,
+    type,
   } = task.taskExecution;
 
   const {
@@ -65,12 +67,20 @@ const MemoTask: FC<{
     extra: { hiddenIds },
   } = useContext(PrintContext);
 
+  const taskName = () => {
+    if (type === TaskExecutionType.REPEAT || type === TaskExecutionType.RECURRING) {
+      return `Task ${stageOrderTree}.${task.orderTree}.${
+        parseInt(task.taskExecution.orderTree) - 1
+      } - ${task.name}`;
+    } else {
+      return `Task ${stageOrderTree}.${task.orderTree} - ${task.name}`;
+    }
+  };
+
   return (
     <View style={taskStyles.taskView} key={`${task.id}`}>
       <View style={taskStyles.taskHeader}>
-        <PdfText style={taskStyles.taskName}>
-          Task {stageOrderTree}.{task.orderTree} - {task.name}
-        </PdfText>
+        <PdfText style={taskStyles.taskName}>{taskName()}</PdfText>
         <PdfText style={taskStyles.taskState}>Task State : {TaskState[taskExecutionState]}</PdfText>
       </View>
       {task.timed && (

@@ -2,7 +2,12 @@ import { ProgressBar } from '#components';
 import { useTypedSelector } from '#store';
 import { setKeepPersistedData } from '#utils';
 import { apiGetObjectTypes, apiPrintJobDetails } from '#utils/apiUrls';
-import { generateVariationData, getParameters, getVariationData } from '#utils/parameterUtils';
+import {
+  generateVariationData,
+  getParameters,
+  getVariationData,
+  getTransformedTasks,
+} from '#utils/parameterUtils';
 import { request } from '#utils/request';
 import React, { FC, useEffect, useRef, useState } from 'react';
 import { PdfJobDataType } from '../Components/Documents/CommonJobPDFDetails';
@@ -23,6 +28,7 @@ const Download: FC<PrintJobProps> = ({ jobId }) => {
   const [stageNo, setStageNo] = useState<number>();
   const [data, setData] = useState<PdfJobDataType | undefined>();
   const [hiddenIds, setHiddenIds] = useState({});
+  const [transformedTasks, setTransformedTasks] = useState<any>();
   const objectTypeIds = useRef<string[]>([]);
   const [variationData, setVariationData] = useState({});
   const { parameters } = useTypedSelector((state) => state.job);
@@ -69,13 +75,15 @@ const Download: FC<PrintJobProps> = ({ jobId }) => {
             'GET',
             apiPrintJobDetails(jobId!),
           );
-          const { parameters, hiddenIds, variationDetails } = getParameters({
+          const { parameters, variationDetails } = getParameters({
             checklist: response?.data?.checklist,
             parameterValues: response?.data?.parameterValues,
           });
+          const { hiddenIds, transformedTasks } = getTransformedTasks(response?.data?.checklist);
           if (response.data.state in COMPLETED_JOB_STATES) {
             setHiddenIds(hiddenIds);
           }
+          setTransformedTasks(transformedTasks);
           setApiData({ parameters, hiddenIds, variationDetails });
           getObjectTypeIdsForResourceParameters(variationDetails, parameters);
           setData(response.data);
@@ -113,6 +121,7 @@ const Download: FC<PrintJobProps> = ({ jobId }) => {
   const workerProps = {
     jobId,
     hiddenIds,
+    transformedTasks,
     profile,
     settings,
     selectedFacility,

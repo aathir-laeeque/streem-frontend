@@ -11,6 +11,8 @@ import React, { FC } from 'react';
 import { CommonJobPdfDetails } from '../Components/Documents/CommonJobPDFDetails';
 import { PrintContext } from './PrintContext';
 import TaskView from './Task';
+import { Task } from '../../../types/task';
+import { Stage } from '../../../types/stage';
 
 const styles = StyleSheet.create({
   stageHeader: {
@@ -35,10 +37,19 @@ export const JobPdf: FC<any> = ({
   dateFormat,
   data,
   hiddenIds,
+  transformedTasks,
   renderInitialPage = false,
   variationData,
 }) => {
   const { checklist, code } = data;
+
+  const getTotalTasks = (stage: Stage) => {
+    let totalTaskExecutions = 0;
+    stage.tasks.forEach((task: Task) => {
+      totalTaskExecutions += task.taskExecutions.length;
+    });
+    return totalTaskExecutions;
+  };
 
   return (
     <PrintContext.Provider
@@ -51,6 +62,7 @@ export const JobPdf: FC<any> = ({
         extra: {
           hiddenIds,
           variationData,
+          transformedTasks,
         },
       }}
     >
@@ -78,16 +90,23 @@ export const JobPdf: FC<any> = ({
                   <View style={styles.stageHeader}>
                     <View style={commonPdfStyles.flexGrid}>
                       <PdfText style={styles.stageHeaderInfo}>Stage {stage.orderTree}</PdfText>
-                      <PdfText style={styles.stageHeaderInfo}>Tasks {stage.tasks.length}</PdfText>
+                      <PdfText style={styles.stageHeaderInfo}>Tasks {getTotalTasks(stage)}</PdfText>
                     </View>
                     <PdfText style={styles.stageName}>{stage.name}</PdfText>
                   </View>
                   {(stage.tasks as unknown as Array<any>).map((task) => {
-                    if (hiddenIds[task.id] === undefined) {
-                      return (
-                        <TaskView task={task} stageOrderTree={stage.orderTree} key={task.id} />
-                      );
-                    }
+                    return task.taskExecutions.map((taskExecution) => {
+                      if (hiddenIds[taskExecution.id] === undefined) {
+                        const _task = transformedTasks.get(taskExecution.id);
+                        return (
+                          <TaskView
+                            task={_task}
+                            stageOrderTree={stage.orderTree}
+                            key={taskExecution.id}
+                          />
+                        );
+                      }
+                    });
                   })}
                 </View>
               );
