@@ -203,57 +203,55 @@ const getContentString = (
 };
 
 const generateVariationDetailText = (
-  details: any[],
   type: string,
   parameterId: string,
   parameters,
   objectTypesList: [],
 ) => {
-  const parameterData = parameters[parameterId];
-  switch (type) {
-    case ParameterVariationType.FILTER:
-      return getContentString(details, parameterData, false, parameters, objectTypesList);
-    case ParameterVariationType.VALIDATION:
-      return getContentString(details, parameterData, true, parameters, objectTypesList);
-    case ParameterVariationType.SHOULD_BE:
-      const detail = Array.isArray(details) ? details[0] : details;
-      const uom = detail?.uom || '';
-      const value =
-        detail.operator === 'BETWEEN'
-          ? `${detail.lowerValue} ${uom} and ${detail.upperValue} ${uom}`
-          : `${detail.value} ${uom}`;
-      return `Check if entered value is ${generateShouldBeCriteria(detail)} ${value}`;
-  }
+  return function (details: any[]) {
+    const parameterData = parameters[parameterId];
+    switch (type) {
+      case ParameterVariationType.FILTER:
+        return getContentString(details, parameterData, false, parameters, objectTypesList);
+      case ParameterVariationType.VALIDATION:
+        return getContentString(details, parameterData, true, parameters, objectTypesList);
+      case ParameterVariationType.SHOULD_BE:
+        const detail = Array.isArray(details) ? details[0] : details;
+        const uom = detail?.uom || '';
+        const value =
+          detail.operator === 'BETWEEN'
+            ? `${detail.lowerValue} ${uom} and ${detail.upperValue} ${uom}`
+            : `${detail.value} ${uom}`;
+        return `Check if entered value is ${generateShouldBeCriteria(detail)} ${value}`;
+    }
+  };
 };
 
 export const generateVariationData = (variationDetails, parameters, objectTypesList) => {
-  const updatedData = Object.keys(variationDetails)?.map((key) => {
-    const obj = variationDetails[key]?.data[0];
-    const parameterId = variationDetails[key]?.parameterId;
-    const location = variationDetails[key]?.location;
+  let updatedData: {}[] = [];
 
-    return {
-      ...obj,
-      location: location,
-      oldVariationString: obj.oldVariation
-        ? generateVariationDetailText(
-            obj.oldVariation,
-            obj.type,
-            parameterId,
-            parameters,
-            objectTypesList,
-          )
-        : DEFAULT_VALUE,
-      newVariationString: obj.newVariation
-        ? generateVariationDetailText(
-            obj.newVariation,
-            obj.type,
-            parameterId,
-            parameters,
-            objectTypesList,
-          )
-        : DEFAULT_VALUE,
-    };
+  Object.keys(variationDetails)?.forEach((key) => {
+    (variationDetails[key]?.data || [])?.forEach((obj) => {
+      const parameterId = variationDetails[key]?.parameterId;
+      const location = variationDetails[key]?.location;
+      const generateVariationFn = generateVariationDetailText(
+        obj.type,
+        parameterId,
+        parameters,
+        objectTypesList,
+      );
+      const temp = {
+        ...obj,
+        location: location,
+        oldVariationString: obj.oldVariation
+          ? generateVariationFn(obj.oldVariation)
+          : DEFAULT_VALUE,
+        newVariationString: obj.newVariation
+          ? generateVariationFn(obj.newVariation)
+          : DEFAULT_VALUE,
+      };
+      updatedData.push(temp);
+    });
   });
   return updatedData;
 };
