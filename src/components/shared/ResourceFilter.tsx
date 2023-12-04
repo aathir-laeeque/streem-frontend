@@ -114,7 +114,7 @@ export const ResourceFilter = ({ onChange, onClear }: any) => {
         resourceOptions: { 'no-options': { label: 'No Options', options: [] } },
       }));
     }
-  }, [list]);
+  }, [list.length]);
 
   const fetchResourcesData = (params: fetchDataParams = {}) => {
     const { query, page = DEFAULT_PAGE_NUMBER, ...rest } = params;
