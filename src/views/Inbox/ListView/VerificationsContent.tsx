@@ -295,9 +295,11 @@ const VerificationsContent: FC<{
             isClearable={true}
           />
         </div>
-        <div className="select-filter">
-          <ResourceFilter onChange={onChildChange} onClear={() => setResourceFilter('')} />
-        </div>
+        {!jobId && (
+          <div className="select-filter">
+            <ResourceFilter onChange={onChildChange} onClear={() => setResourceFilter('')} />
+          </div>
+        )}
       </div>
       <LoadingContainer
         loading={loading}
