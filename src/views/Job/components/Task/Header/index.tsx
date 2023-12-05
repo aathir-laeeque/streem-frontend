@@ -81,10 +81,12 @@ const Header: FC<HeaderProps> = ({ task }) => {
   const showMenuActions = () => {
     const isErrorCorrectionVisible = isTaskCompleted && (!correctionEnabled || !correctionReason);
 
-    const isSkipOrCweVisible =
+    const isCweVisible =
       !isTaskCompleted && !isBlocked && checkPermission(['inbox', 'completeWithException']);
 
-    const menuOptionsVisible = isErrorCorrectionVisible || isSkipOrCweVisible;
+    const isSkipVisible = canSkipTask && !isTaskCompleted && !isBlocked;
+
+    const menuOptionsVisible = isErrorCorrectionVisible || isCweVisible || isSkipVisible;
 
     return isInboxView && isJobStarted && isUserAssignedToTask && menuOptionsVisible;
   };
@@ -191,60 +193,66 @@ const Header: FC<HeaderProps> = ({ task }) => {
                       Error correction
                     </MenuItem>
                   )}
-                  {!isTaskCompleted &&
-                    !isBlocked &&
-                    checkPermission(['inbox', 'completeWithException']) && (
-                      <MenuItem
-                        onClick={() => {
-                          handleClose();
-                          if (!isBlocked) {
-                            if (canSkipTask) {
-                              dispatch(
-                                openOverlayAction({
-                                  type: OverlayNames.REASON_MODAL,
-                                  props: {
-                                    modalTitle: 'Skip Task',
-                                    modalDesc: 'Provide the details for skipping the task',
-                                    onSubmitHandler: (reason: string, closeModal: () => void) => {
-                                      dispatch(
-                                        jobActions.performTaskAction({
-                                          id: task.id,
-                                          reason,
-                                          action: TaskAction.SKIP,
-                                        }),
-                                      );
-                                      closeModal();
-                                    },
+                  {!isTaskCompleted && !isBlocked && (
+                    <>
+                      {canSkipTask && (
+                        <MenuItem
+                          onClick={() => {
+                            handleClose();
+                            dispatch(
+                              openOverlayAction({
+                                type: OverlayNames.REASON_MODAL,
+                                props: {
+                                  modalTitle: 'Skip Task',
+                                  modalDesc: 'Provide the details for skipping the task',
+                                  onSubmitHandler: (reason: string, closeModal: () => void) => {
+                                    dispatch(
+                                      jobActions.performTaskAction({
+                                        id: task.id,
+                                        reason,
+                                        action: TaskAction.SKIP,
+                                      }),
+                                    );
+                                    closeModal();
                                   },
-                                }),
-                              );
-                            } else {
-                              dispatch(
-                                openOverlayAction({
-                                  type: OverlayNames.REASON_MODAL,
-                                  props: {
-                                    modalTitle: 'Complete with Exception',
-                                    modalDesc: 'Provide the details for Exception',
-                                    onSubmitHandler: (reason: string, closeModal: () => void) => {
-                                      dispatch(
-                                        jobActions.performTaskAction({
-                                          id: task.id,
-                                          reason,
-                                          action: TaskAction.COMPLETE_WITH_EXCEPTION,
-                                        }),
-                                      );
-                                      closeModal();
-                                    },
+                                },
+                              }),
+                            );
+                          }}
+                        >
+                          Skip the task
+                        </MenuItem>
+                      )}
+                      {checkPermission(['inbox', 'completeWithException']) && (
+                        <MenuItem
+                          onClick={() => {
+                            handleClose();
+                            dispatch(
+                              openOverlayAction({
+                                type: OverlayNames.REASON_MODAL,
+                                props: {
+                                  modalTitle: 'Complete with Exception',
+                                  modalDesc: 'Provide the details for Exception',
+                                  onSubmitHandler: (reason: string, closeModal: () => void) => {
+                                    dispatch(
+                                      jobActions.performTaskAction({
+                                        id: task.id,
+                                        reason,
+                                        action: TaskAction.COMPLETE_WITH_EXCEPTION,
+                                      }),
+                                    );
+                                    closeModal();
                                   },
-                                }),
-                              );
-                            }
-                          }
-                        }}
-                      >
-                        {canSkipTask ? 'Skip the task' : 'Complete with Exception'}
-                      </MenuItem>
-                    )}
+                                },
+                              }),
+                            );
+                          }}
+                        >
+                          Complete with Exception
+                        </MenuItem>
+                      )}
+                    </>
+                  )}
                 </StyledMenu>
               </>
             )}
