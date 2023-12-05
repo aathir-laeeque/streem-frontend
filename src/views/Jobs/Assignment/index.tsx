@@ -10,8 +10,9 @@ import React, { FC, useEffect, useReducer, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 import { CompletedJobStates, Job } from '../ListView/types';
-import Section, { AllowedUser } from './Section';
+import Section from './Section';
 import { jobActions } from '#views/Job/jobStore';
+import { User } from '#services/users';
 
 export const Wrapper = styled.div.attrs({})`
   background-color: #ffffff;
@@ -47,6 +48,10 @@ export const Wrapper = styled.div.attrs({})`
   }
 `;
 
+export type AllowedUser = Pick<User, 'id' | 'lastName' | 'employeeId' | 'firstName'> & {
+  taskIds: string[];
+};
+
 type Props = RouteComponentProps<{ jobId: Job['id'] }>;
 
 type State = Record<string, Record<string, [boolean, string]>>;
@@ -79,17 +84,13 @@ const reducer = (state: State, action: any): State => {
 
     case 'SET_ALL_TASK_STATE':
       action.payload.tasks.forEach((task) => {
-        if (
-          !action.payload.trainedUsersAssignedTaskIds?.some((taskId: string) => taskId === task.id)
-        ) {
-          temp[task.stageId] = {
-            ...temp[task.stageId],
-            [task.taskExecution.id]: [
-              task.taskExecution.state in CompletedJobStates ? false : action.payload.state,
-              task.id,
-            ],
-          };
-        }
+        temp[task.stageId] = {
+          ...temp[task.stageId],
+          [task.taskExecution.id]: [
+            task.taskExecution.state in CompletedJobStates ? false : action.payload.state,
+            task.id,
+          ],
+        };
       });
       return { ...state, ...temp };
 
@@ -163,34 +164,18 @@ const Assignments: FC<Props> = (props) => {
           sectionState={state[stage.id]}
           localDispatch={localDispatch}
           isFirst={!!index}
-          trainedUsersList={trainedUsersList}
         />,
       );
     });
     return _stages;
   };
 
-  const trainedUsersAssignedTaskIds = trainedUsersList.reduce((acc: string[], curr) => {
-    acc = [...acc, ...curr.taskIds];
-    return acc;
-  }, []);
-
-  let isAllStagesAndTasksAssignedToTrainedUser = false;
-  stages.forEach((stage) => {
-    if (!isAllStagesAndTasksAssignedToTrainedUser)
-      stage.tasks.every((_taskId: string) => {
-        if (trainedUsersAssignedTaskIds?.some((taskId: string) => taskId === _taskId)) {
-          isAllStagesAndTasksAssignedToTrainedUser = true;
-        }
-      });
-  });
-
   if (loading) {
     return <div>Loading..</div>;
   } else {
     return (
       <div style={{ padding: '8px', height: '100%' }}>
-        <GoBack label="Return to process" className="go-back" />
+        <GoBack label="Return to Job" className="go-back" />
         <Wrapper>
           <div className="header">
             <Checkbox
@@ -199,7 +184,6 @@ const Assignments: FC<Props> = (props) => {
                 : isNoTaskSelected
                 ? { checked: false, partial: false }
                 : { checked: false, partial: true })}
-              disabled={isAllStagesAndTasksAssignedToTrainedUser}
               label="Select All Tasks And Stages"
               onClick={() => {
                 localDispatch({
@@ -207,7 +191,6 @@ const Assignments: FC<Props> = (props) => {
                   payload: {
                     tasks,
                     state: isAllTaskSelected ? false : isNoTaskSelected,
-                    trainedUsersAssignedTaskIds,
                   },
                 });
               }}
@@ -222,6 +205,7 @@ const Assignments: FC<Props> = (props) => {
                       jobId,
                       selectedTasks,
                       assignToEntireJob: selectedTasks.length === totalTasksCount,
+                      trainedUsersList,
                     },
                   }),
                 );

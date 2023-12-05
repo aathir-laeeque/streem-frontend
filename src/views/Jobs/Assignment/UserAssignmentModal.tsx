@@ -18,11 +18,13 @@ import { useDispatch } from 'react-redux';
 import { Job } from '../ListView/types';
 import { Wrapper } from './styles';
 import { jobActions } from '#views/Job/jobStore';
+import { AllowedUser } from '.';
 
 type Props = {
   jobId: Job['id'];
   selectedTasks: [string, string][];
   assignToEntireJob: boolean;
+  trainedUsersList: AllowedUser[];
 };
 
 type ListItemProps = {
@@ -46,7 +48,7 @@ const ListItem = ({ user, selected, partialSelected = false, onClick }: ListItem
 const UserAssignment: FC<CommonOverlayProps<Props>> = ({
   closeAllOverlays,
   closeOverlay,
-  props: { jobId, selectedTasks = [], assignToEntireJob = false } = {},
+  props: { jobId, selectedTasks = [], assignToEntireJob = false, trainedUsersList } = {},
 }) => {
   const dispatch = useDispatch();
   // users that are already selected
@@ -226,23 +228,22 @@ const UserAssignment: FC<CommonOverlayProps<Props>> = ({
               />
             ))}
 
-          {[...users.filter((user) => !assignedUserList.some((_user) => _user.id === user.id))].map(
-            (user) => (
-              <ListItem
-                user={user}
-                key={user.id}
-                selected={false}
-                partialSelected={false}
-                onClick={() => {
-                  setUnAssignedUserList((_users) => _users.filter((_user) => _user.id !== user.id));
-                  setAssignedUserList((_users) => [
-                    ..._users,
-                    { ...user, completelyAssigned: true },
-                  ]);
-                }}
-              />
+          {[
+            ...(trainedUsersList?.length > 0 ? trainedUsersList : users)?.filter(
+              (user) => !assignedUserList.some((_user) => _user.id === user.id),
             ),
-          )}
+          ].map((user) => (
+            <ListItem
+              user={user}
+              key={user.id}
+              selected={false}
+              partialSelected={false}
+              onClick={() => {
+                setUnAssignedUserList((_users) => _users.filter((_user) => _user.id !== user.id));
+                setAssignedUserList((_users) => [..._users, { ...user, completelyAssigned: true }]);
+              }}
+            />
+          ))}
         </div>
       </BaseModal>
     </Wrapper>
