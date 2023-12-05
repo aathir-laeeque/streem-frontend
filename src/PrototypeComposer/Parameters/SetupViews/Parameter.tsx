@@ -37,9 +37,8 @@ const ParameterParameter: FC<{ form: UseFormMethods<any>; isReadOnly: boolean }>
               placeholder: 'Write Here',
               name: 'data.uom',
               disabled: isReadOnly,
-              ref: register({
-                required: true,
-              }),
+              optional: true,
+              ref: register,
             },
           },
           {

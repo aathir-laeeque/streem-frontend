@@ -317,9 +317,8 @@ const CalculationParameter: FC<{ form: UseFormMethods<any>; isReadOnly: boolean 
         name={`data.uom`}
         label="Unit of Measurement"
         disabled={isReadOnly}
-        ref={register({
-          required: true,
-        })}
+        optional={true}
+        ref={register}
       />
       <ul className="list" {...(isReadOnly && { style: { marginBottom: '16px' } })}>
         {Object.entries(variables).map(([variableName, value]: [string, any], index) => {
