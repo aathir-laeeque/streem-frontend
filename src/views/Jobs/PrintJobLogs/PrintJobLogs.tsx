@@ -25,7 +25,7 @@ const ROWS_PER_PAGE = 12;
 const WIDTH_PER_COLUMN = 100 / 10;
 const COLUMNS_TO_ADD_PER_PAGE = COLUMNS_PER_PAGE - FREEZED_COLUMNS;
 
-export const MyCustomViewJobAuditLogs: FC<any> = ({
+export const CustomViewJobAuditLogsPdf: FC<any> = ({
   visibleColumns,
   settings,
   filtersVisualMap,

@@ -1,11 +1,3 @@
-import { pdf } from '@react-pdf/renderer';
-import * as Comlink from 'comlink';
-import PDFMerger from 'pdf-merger-js';
-import React from 'react';
-import { MyPrintObjectChangeLogs } from '../../Ontology/PrintObjectChangeLogs/PrintObjectChangeLogs';
-import { JobPdf } from '../PrintJob/JobPdf';
-import { JobAuditLogsPdf } from '../PrintJobAuditLogs/JobAuditLogsPdf';
-import { MyCustomViewJobAuditLogs } from '../PrintJobLogs/PrintJobLogs';
 import Nunito200 from '#assets/fonts/nunito/nunito-v14-latin-200.ttf';
 import Nunito300 from '#assets/fonts/nunito/nunito-v14-latin-300.ttf';
 import Nunito600 from '#assets/fonts/nunito/nunito-v14-latin-600.ttf';
@@ -13,10 +5,17 @@ import Nunito700 from '#assets/fonts/nunito/nunito-v14-latin-700.ttf';
 import Nunito800 from '#assets/fonts/nunito/nunito-v14-latin-800.ttf';
 import Nunito900 from '#assets/fonts/nunito/nunito-v14-latin-900.ttf';
 import Nunito400 from '#assets/fonts/nunito/nunito-v14-latin-regular.ttf';
-import { Font } from '@react-pdf/renderer';
+import { Font, pdf } from '@react-pdf/renderer';
+import * as Comlink from 'comlink';
 import { cloneDeep } from 'lodash';
+import PDFMerger from 'pdf-merger-js';
+import React from 'react';
+import { ObjectChangeLogsPdf } from '../../Ontology/PrintObjectChangeLogs/PrintObjectChangeLogs';
 import { SessionActivityPdf } from '../../UserAccess/PrintSessionActivity/PrintSessionActivityPdf';
+import { JobPdf } from '../PrintJob/JobPdf';
 import { PrintContext } from '../PrintJob/PrintContext';
+import { JobAuditLogsPdf } from '../PrintJobAuditLogs/JobAuditLogsPdf';
+import { CustomViewJobAuditLogsPdf } from '../PrintJobLogs/PrintJobLogs';
 
 Font.register({
   family: 'Nunito',
@@ -87,11 +86,11 @@ const generateSingle = async (data: any) => {
       break;
 
     case 'CUSTOM_VIEW_JOB_LOGS':
-      pdfContent = <MyCustomViewJobAuditLogs {...data} />;
+      pdfContent = <CustomViewJobAuditLogsPdf {...data} />;
       break;
 
     case 'OBJECT_CHANGE_LOGS':
-      pdfContent = <MyPrintObjectChangeLogs {...data} />;
+      pdfContent = <ObjectChangeLogsPdf {...data} />;
       break;
 
     case 'SESSION_ACTIVITY_LOGS':

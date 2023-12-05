@@ -19,12 +19,7 @@ export const styles = StyleSheet.create({
 
 const ROWS_PER_PAGE = 12;
 
-export const MyPrintObjectChangeLogs: FC<any> = ({
-  list,
-  settings,
-  pdfMetaData,
-  filtersVisualMap,
-}) => {
+export const ObjectChangeLogsPdf: FC<any> = ({ list, settings, pdfMetaData, filtersVisualMap }) => {
   const context = useContext(PrintContext);
   const { dateAndTimeStampFormat, selectedFacility, profile } = context;
 
