@@ -5,7 +5,7 @@ import { NotificationType } from '#components/Notification/types';
 import { openOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
 import { useTypedSelector } from '#store';
-import { MandatoryParameter, ParameterMode, StoreParameter, TaskExecutionType } from '#types';
+import { MandatoryParameter, StoreParameter, TaskExecutionType } from '#types';
 import { baseUrl } from '#utils/apiUrls';
 import { FilterField, FilterOperators, ResponseObj } from '#utils/globalTypes';
 import { ObjectIdsDataFromChoices } from '#utils/parameterUtils';
@@ -64,15 +64,6 @@ const ResourceParameter: FC<ParameterProps> = ({ parameter, isCorrectingError })
 
   const propertyFilters = useRef(null);
 
-  const referencedParameterIds = useRef<string>(
-    propertyFilters.current?.fields?.reduce((acc, currField) => {
-      if (currField?.referencedParameterId) {
-        acc.push(currField.referencedParameterId);
-      }
-      return acc;
-    }, []) || [],
-  );
-
   // Allow user to select the resource only from the list of resources selected in the MASTER task
   const taskExecution = taskExecutions.get(parameter.response.taskExecutionId);
   const isTaskRepeatOrRecurring =
@@ -87,21 +78,6 @@ const ResourceParameter: FC<ParameterProps> = ({ parameter, isCorrectingError })
   }, []);
 
   useEffect(() => {
-    if (propertyFilters.current && isOpen) {
-      getOptions(getUrl(0));
-    }
-  }, [propertyFilters.current, isOpen]);
-
-  useEffect(() => {
-    propertyFilters.current = getPropertyFilters();
-  }, [parameter.response.variations]);
-
-  const parameterForFiltersValueChange = referencedParameterIds.current?.map((curr) => {
-    const _parameter = parameters?.get(curr);
-    return _parameter?.response?.value || _parameter?.response?.choices;
-  });
-
-  useEffect(() => {
     if (isTaskRepeatOrRecurring) {
       const parameterResponses = parameters.get(parameter.id)?.response;
 
@@ -114,11 +90,14 @@ const ResourceParameter: FC<ParameterProps> = ({ parameter, isCorrectingError })
         options: sortedResponses[0]?.choices,
       }));
     } else {
-      if (parameter?.mode !== ParameterMode.READ_ONLY) getOptions(getUrl(0));
+      if (propertyFilters.current && isOpen) {
+        getOptions(getUrl(0));
+      }
     }
-  }, parameterForFiltersValueChange);
+  }, [propertyFilters.current, isOpen]);
 
   useEffect(() => {
+    propertyFilters.current = getPropertyFilters();
     setState((prev) => ({
       ...prev,
       value: parameter.response.choices?.length
