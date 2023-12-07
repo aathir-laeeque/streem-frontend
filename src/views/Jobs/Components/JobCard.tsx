@@ -325,8 +325,10 @@ const JobCard: FC<{
                       .sort((a: Parameter, b: Parameter) => a.orderTree - b.orderTree)
                       .slice(0, 5)
                       .map((parameter: Parameter) => {
-                        if (parameter?.response?.hidden) return null;
-                        const value = getParameterContent(parameter);
+                        // parameter response is an array of responses and in case of CJF there will always be only one response.
+                        if (parameter?.response?.[0]?.hidden) return null;
+                        const cjfParameter = { ...parameter, response: parameter.response[0] };
+                        const value = getParameterContent(cjfParameter);
                         return (
                           <div className="info-item" key={parameter.label}>
                             <label className="info-item-label">{parameter.label}</label>

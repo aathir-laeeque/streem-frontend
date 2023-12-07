@@ -101,8 +101,10 @@ const JobHeader: FC = () => {
               </div>
               {cjfValues?.map((parameterId) => {
                 const parameter = parameters.get(parameterId)!;
-                const value = getParameterContent(parameter);
-                return !parameter.response.hidden ? (
+                // parameter response is an array of responses and in case of CJF there will always be only one response.
+                const cjfParameter = { ...parameter, response: parameter.response[0] };
+                const value = getParameterContent(cjfParameter);
+                return !parameter.response[0].hidden ? (
                   <div className="info-item" key={parameter.label}>
                     <label className="info-item-label">{parameter.label}</label>
                     <span className="info-item-value" title={value}>
