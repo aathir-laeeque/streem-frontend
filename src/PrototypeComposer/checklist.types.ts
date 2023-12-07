@@ -267,6 +267,7 @@ export enum LogType {
   FILE = 'FILE',
   TEXT = 'TEXT',
   DATE_TIME = 'DATE_TIME',
+  TIME = 'TIME',
 }
 
 export enum TriggerTypeEnum {

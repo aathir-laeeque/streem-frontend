@@ -149,6 +149,11 @@ export const getFormattedJobLogs = (jobLogColumns: any) => {
                 value: row[column.id + column.triggerType].value,
                 type: InputTypes.DATE_TIME,
               });
+            } else if (column.type === LogType.TIME) {
+              return formatDateTime({
+                value: row[column.id + column.triggerType].value,
+                type: InputTypes.TIME,
+              });
             } else if (
               column.type === LogType.FILE &&
               row[column.id + column.triggerType]?.medias?.length

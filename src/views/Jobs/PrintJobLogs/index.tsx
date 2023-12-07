@@ -20,7 +20,7 @@ const Download: FC<any> = ({ viewId }) => {
     auth: { profile, settings, selectedFacility },
     auditLogFilters: { filters, columns: visibleColumns },
   } = useTypedSelector((state) => state);
-  const { dateAndTimeStampFormat } = useTypedSelector(
+  const { dateAndTimeStampFormat, timeFormat, dateFormat } = useTypedSelector(
     (state) => state.facilityWiseConstants[selectedFacility!.id],
   );
 
@@ -129,7 +129,7 @@ const Download: FC<any> = ({ viewId }) => {
               fieldsVisualMap[field.field] = {
                 ...fieldsVisualMap[field.field],
                 label: 'Job Created At',
-                value: formatDateTime({ value: field.values[0] }),
+                value: formatDateTime({ value: field.values[0], format: dateAndTimeStampFormat }),
               };
               break;
             }
@@ -229,6 +229,8 @@ const Download: FC<any> = ({ viewId }) => {
     dateAndTimeStampFormat,
     resourceParameterChoicesMap,
     process,
+    timeFormat,
+    dateFormat,
     type: 'CUSTOM_VIEW_JOB_LOGS',
   };
 
