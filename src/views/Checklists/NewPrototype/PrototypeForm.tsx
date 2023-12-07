@@ -112,6 +112,9 @@ const PrototypeForm: FC<Props> = (props) => {
         if (formError.code === 'E124') {
           updatedFormErrors.authors = formError;
         }
+        if (formError.code === 'E143') {
+          updatedFormErrors.properties[formError.id.toString()] = formError.message;
+        }
       });
       setFormErrors(updatedFormErrors);
     }
@@ -124,11 +127,14 @@ const PrototypeForm: FC<Props> = (props) => {
     if (isValid) {
       if (formMode === FormMode.ADD) {
         dispatch(
-          addNewPrototype({
-            ...formValues,
-            authors: formValues.authors.map((author) => author.id),
-            useCaseId: selectedUseCase!.id,
-          }),
+          addNewPrototype(
+            {
+              ...formValues,
+              authors: formValues.authors.map((author) => author.id),
+              useCaseId: selectedUseCase!.id,
+            },
+            getApiFormErrors,
+          ),
         );
       } else if (formMode === FormMode.EDIT) {
         dispatch(

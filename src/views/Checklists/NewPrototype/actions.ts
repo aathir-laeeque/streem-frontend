@@ -3,8 +3,10 @@ import { actionSpreader } from '#store/helpers';
 import { Error } from '#utils/globalTypes';
 import { Author, FormValuesOnlyWithAuthorIds, NewPrototypeActions } from './types';
 
-export const addNewPrototype = (data: FormValuesOnlyWithAuthorIds) =>
-  actionSpreader(NewPrototypeActions.ADD_NEW_PROTOTYPE, { data });
+export const addNewPrototype = (
+  data: FormValuesOnlyWithAuthorIds,
+  setApiFormErrors: (formErrors: Error[]) => void,
+) => actionSpreader(NewPrototypeActions.ADD_NEW_PROTOTYPE, { data, setApiFormErrors });
 
 export const addRevisionPrototype = (
   checklistId: Checklist['id'],

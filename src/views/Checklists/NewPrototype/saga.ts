@@ -55,7 +55,7 @@ const transformFormData = ({ data, mode, originalAuthors }: transformFormDataTyp
 
 function* addPrototypeSaga({ payload }: ReturnType<typeof addNewPrototype>) {
   try {
-    const { data } = payload;
+    const { data, setApiFormErrors } = payload;
 
     const { selectedFacility } = yield select((state: RootState) => state.auth);
 
@@ -69,6 +69,7 @@ function* addPrototypeSaga({ payload }: ReturnType<typeof addNewPrototype>) {
     if (response) {
       navigate(`/checklists/${response.id}`);
     } else {
+      setApiFormErrors(errors);
       console.error('error from the create checklist api  :: ', errors);
     }
   } catch (error) {

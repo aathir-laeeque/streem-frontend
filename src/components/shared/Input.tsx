@@ -119,6 +119,7 @@ const Wrapper = styled.div<WrapperProps>`
   }
 
   .field-error {
+    font-size: 12px;
     color: #eb5757;
     display: flex;
     justify-content: flex-start;
