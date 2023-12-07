@@ -175,7 +175,7 @@ const Header: FC<HeaderProps> = ({ task }) => {
               </div>
             )}
             {task.timed && (
-              <div className="time-info">
+              <div className="time-info" style={{ padding: '6px 15px' }}>
                 <div>
                   {task.timerOperator === 'NOT_LESS_THAN' ? (
                     <>
@@ -190,6 +190,26 @@ const Header: FC<HeaderProps> = ({ task }) => {
                     <span>Complete under {task.maxPeriod && formatDuration(task?.maxPeriod)}</span>
                   )}
                 </div>
+              </div>
+            )}
+            {task.automations.length > 0 && (
+              <div
+                onClick={() => {
+                  dispatch(
+                    openOverlayAction({
+                      type: OverlayNames.AUTOMATION_TASK_MODAL,
+                      props: {
+                        task: task,
+                      },
+                    }),
+                  );
+                }}
+                style={{ display: 'flex', cursor: 'pointer', gap: '10px', color: '#1D84FF' }}
+              >
+                <Tooltip title={'Automation Task'} arrow>
+                  <img src={repeatTaskIcon} />
+                </Tooltip>
+                <span style={{ margin: '5px' }}>Automations ({task.automations.length})</span>
               </div>
             )}
             {type === TaskExecutionType.MASTER && enableScheduling && (

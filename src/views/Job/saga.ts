@@ -387,9 +387,16 @@ function* performTaskActionSaga({ payload }: ReturnType<typeof jobActions.perfor
       );
       throw getErrorMsg(errors);
     }
-
     if (isAutomamationTriggered && filteredAutomations?.length) {
-      for (const automation of filteredAutomations) {
+      if (filteredAutomations.length > 1) {
+        yield put(
+          showNotification({
+            type: NotificationType.SUCCESS,
+            msg: `${filteredAutomations.length} Automations are completed successfully`,
+          }),
+        );
+      } else {
+        const automation = filteredAutomations[0];
         if (automationInputValidator(automation, parameters)) {
           const objectTypeDisplayName = parameters.get(
             automation.actionDetails.referencedParameterId,

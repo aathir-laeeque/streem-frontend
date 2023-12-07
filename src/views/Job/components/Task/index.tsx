@@ -216,7 +216,6 @@ const Task: FC<{ task: StoreTask }> = ({ task }) => {
           parametersErrors={parametersErrors}
         />
       </div>
-      <AutomationInfo task={task} />
       <Footer task={task} />
     </TaskWrapper>
   );

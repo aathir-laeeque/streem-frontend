@@ -14,6 +14,7 @@ import SignningNotCompleteModal from '#views/Job/overlays/SignningNotComplete';
 import StartTaskError from '#views/Job/overlays/StartTaskError';
 import TaskPauseReasonModal from '#views/Job/overlays/TaskPauseReasonModal';
 import ViewReason from '#views/Job/overlays/ViewReason';
+import AutomationTaskModal from '#views/Job/overlays/AutomationTaskModal';
 import { AuthorsDetailsPopover } from '#PrototypeComposer/Overlays/AuthorsDetailsPopover';
 import { ChecklistErrorsPopover } from '#PrototypeComposer/Overlays/ChecklistErrorsPopover';
 import ConfigureActions from '#PrototypeComposer/Overlays/ConfigureActions';
@@ -240,6 +241,9 @@ const getOverlay = (params: CommonOverlayProps<any>) => {
 
     case OverlayNames.TASK_PAUSE_REASON_MODAL:
       return <TaskPauseReasonModal {...params} />;
+
+    case OverlayNames.AUTOMATION_TASK_MODAL:
+      return <AutomationTaskModal {...params} />;
 
     case OverlayNames.ORIENTATION_MODAL:
       return <OrientationModal {...params} />;
