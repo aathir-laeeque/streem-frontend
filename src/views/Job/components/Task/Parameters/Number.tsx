@@ -36,7 +36,7 @@ const NumberParameter: FC<Omit<ParameterProps, 'taskId'>> = ({ parameter, isCorr
           ...parameter,
           data: {
             ...parameter.data,
-            input: parseFloat(value),
+            input: value,
           },
         };
 

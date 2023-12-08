@@ -33,6 +33,8 @@ export const MyCustomViewJobAuditLogs: FC<any> = ({
   showProcessSection,
   process,
   resourceParameterChoicesMap,
+  timeFormat,
+  dateFormat,
 }) => {
   const context = useContext(PrintContext);
   const { dateAndTimeStampFormat, selectedFacility, profile } = context;
@@ -54,10 +56,20 @@ export const MyCustomViewJobAuditLogs: FC<any> = ({
         );
         return cellValue.join(',');
       }
-      if (column.type === LogType.DATE) {
+      if (column.type === LogType.DATE_TIME) {
         return formatDateTime({
           value: row[column.id + column.triggerType].value,
           format: dateAndTimeStampFormat,
+        });
+      } else if (column.type === LogType.DATE) {
+        return formatDateTime({
+          value: row[column.id + column.triggerType].value,
+          format: dateFormat,
+        });
+      } else if (column.type === LogType.TIME) {
+        return formatDateTime({
+          value: row[column.id + column.triggerType].value,
+          format: timeFormat,
         });
       } else if (
         column.type === LogType.FILE &&

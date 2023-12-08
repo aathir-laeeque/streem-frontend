@@ -7,7 +7,7 @@ import { formatDateTime } from '#utils/timeUtils';
 import { logsResourceChoicesMapper } from '#views/Checklists/JobLogs/DynamicContent';
 import { fetchProcessLogs } from '#views/Checklists/ListView/actions';
 import { camelCase, startCase } from 'lodash';
-import React, { FC, useEffect, useRef, useState } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { PdfWorkerContainer } from '../PdfWorker/LoadPdfWorker';
 
@@ -19,7 +19,7 @@ const Download: FC<any> = ({ viewId }) => {
     auth: { profile, settings, selectedFacility },
     auditLogFilters: { filters, columns: visibleColumns },
   } = useTypedSelector((state) => state);
-  const { dateAndTimeStampFormat, dateFormat, timeFormat } = useTypedSelector(
+  const { dateAndTimeStampFormat, timeFormat, dateFormat } = useTypedSelector(
     (state) => state.facilityWiseConstants[selectedFacility!.id],
   );
 
@@ -128,7 +128,7 @@ const Download: FC<any> = ({ viewId }) => {
               fieldsVisualMap[field.field] = {
                 ...fieldsVisualMap[field.field],
                 label: 'Job Created At',
-                value: formatDateTime({ value: field.values[0] }),
+                value: formatDateTime({ value: field.values[0], format: dateAndTimeStampFormat }),
               };
               break;
             }
