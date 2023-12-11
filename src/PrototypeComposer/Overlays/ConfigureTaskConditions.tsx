@@ -522,10 +522,22 @@ const ConditionFormCard: FC<Props> = ({ isReadOnly, state, setState, activeTaskI
         'parameterId',
         'errorMessage',
         'propertyId',
-        'value',
       ];
 
-      return keysToValidate.every((key) => !!value?.[key]);
+      if (conditionDetails?.propertyInputType === InputTypes.SINGLE_SELECT) {
+        keysToValidate = [...keysToValidate, 'choices'];
+      } else {
+        keysToValidate = [...keysToValidate, 'value'];
+      }
+
+      return keysToValidate.every((key) => {
+        if (key === 'choices') {
+          return conditionDetails?.propertyInputType === InputTypes.SINGLE_SELECT
+            ? value?.[key]?.length
+            : true;
+        }
+        return !!value?.[key];
+      });
     }
     return false;
   };
@@ -745,27 +757,30 @@ const ConditionFormCard: FC<Props> = ({ isReadOnly, state, setState, activeTaskI
                           })),
                       }),
                       placeholder: 'Enter Value',
-                      value: value?.value
-                        ? conditionDetails.propertyInputType === InputTypes.SINGLE_SELECT
-                          ? [
-                              {
-                                value: value.value,
-                                label: selectedObjectType?.properties
-                                  ?.find(
-                                    (objectTypeProperty) =>
-                                      objectTypeProperty.id === conditionDetails.propertyId,
-                                  )
-                                  ?.options?.find((option) => option.id === value.value)
-                                  ?.displayName,
-                              },
-                            ]
-                          : value.value
-                        : null,
+                      value:
+                        value?.value || value?.choices
+                          ? conditionDetails.propertyInputType === InputTypes.SINGLE_SELECT
+                            ? value?.choices?.map((option: Record<string, string>) => ({
+                                value: option.id,
+                                label: option.displayName,
+                              }))
+                            : value.value
+                          : null,
                       onChange: (_option: Record<string, string>) => {
-                        onChange({
-                          ...conditionDetails,
-                          value: _option.value,
-                        });
+                        if (conditionDetails.propertyInputType === InputTypes.SINGLE_SELECT) {
+                          let choices = [{ id: _option.value, displayName: _option.label }];
+                          onChange({
+                            ...conditionDetails,
+                            choices,
+                            value: null,
+                          });
+                        } else {
+                          onChange({
+                            ...conditionDetails,
+                            value: _option.value,
+                            choices: null,
+                          });
+                        }
                       },
                     },
                   },
