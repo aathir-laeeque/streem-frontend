@@ -34,11 +34,13 @@ const ParameterParameter: FC<{ form: UseFormMethods<any>; isReadOnly: boolean }>
             props: {
               id: 'uom',
               label: 'Unit of Measurement',
-              placeholder: 'Write Here',
+              placeholder: 'Write here in smallcase characters',
               name: 'data.uom',
               disabled: isReadOnly,
               optional: true,
-              ref: register,
+              ref: register({
+                pattern: /^[a-z]+$/, // This regex allows only lowercase letters
+              }),
             },
           },
           {
