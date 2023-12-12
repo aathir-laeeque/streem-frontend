@@ -63,6 +63,7 @@ export function parseJobData(
 
       if (stageId && stageId === stage.id) {
         _task.parametersErrors = currentState.tasks.get(task.id)?.parametersErrors;
+        _task.errors = currentState.tasks.get(task.id)?.errors;
       }
 
       task?.parameters?.forEach((__parameter) => {

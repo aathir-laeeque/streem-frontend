@@ -131,6 +131,10 @@ export enum TaskAction {
 export enum TaskErrors {
   E201 = 'TASK_INCOMPLETE',
   E202 = 'TASK_NOT_FOUND',
+  E2301 = 'INTERLOCK_NOT_FOUND_FOR_TASK',
+  E2302 = 'INTERLOCK_INPUT_CANNOT_BE_EMPTY',
+  E2304 = 'INTERLOCK_CONDITION_CANNOT_BE_VALIDATED_DUE_TO_MISSING_RESOURCES',
+  E442 = 'INTERLOCK_VALIDATION_FAILED',
 }
 export interface StoreTaskExecution extends TaskExecution {
   previous?: string;

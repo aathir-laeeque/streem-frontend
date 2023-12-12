@@ -102,6 +102,25 @@ const Wrapper = styled.div.attrs({
       }
     }
 
+    .task-error {
+      padding: 12px 16px;
+      background-color: white;
+    }
+
+    .task-error-wrapper {
+      align-items: center;
+      color: #eb5757;
+      display: flex;
+      font-size: 12px;
+      justify-content: flex-start;
+
+      .task-error-icon {
+        font-size: 16px;
+        color: #eb5757;
+        margin-right: 5px;
+      }
+    }
+
     .start-audit {
       background-color: #f4f4f4;
       padding: 8px 16px;

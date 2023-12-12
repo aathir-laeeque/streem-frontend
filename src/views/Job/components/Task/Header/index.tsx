@@ -21,6 +21,7 @@ import taskRecurrenceIconDisabled from '#assets/svg/task-recurrence-grey.svg';
 import Tooltip from '#components/shared/Tooltip';
 import scheduleTaskIcon from '#assets/svg/schedule-icon-black.svg';
 import ReasonTag from './ReasonTag';
+import { Error as ErrorIcon } from '@material-ui/icons';
 
 type HeaderProps = {
   task: StoreTask;
@@ -37,6 +38,7 @@ const Header: FC<HeaderProps> = ({ task }) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
   const {
+    errors: taskErrors,
     taskExecution: {
       state,
       reason,
@@ -430,6 +432,16 @@ const Header: FC<HeaderProps> = ({ task }) => {
             )}
           </div>
         </div>
+
+        {taskErrors && taskErrors.length > 0 && (
+          <div className="task-error">
+            <div className="task-error-wrapper">
+              <ErrorIcon className="task-error-icon" />
+              {taskErrors.join(' ')}
+            </div>
+          </div>
+        )}
+
         {!isTaskCompleted &&
           type === TaskExecutionType.RECURRING &&
           getEpochTimeDifference(recurringExpectedDueAt) === 'LATE' && (
