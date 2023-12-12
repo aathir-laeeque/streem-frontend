@@ -1,3 +1,4 @@
+import { resetChecklistValidationErrors } from '#PrototypeComposer/actions';
 import { MandatoryParameter, NonMandatoryParameter } from '#PrototypeComposer/checklist.types';
 import { showNotification } from '#components/Notification/actions';
 import { NotificationType } from '#components/Notification/types';
@@ -26,11 +27,10 @@ import {
   updateStoreParameter,
 } from './actions';
 import { ParameterListActions } from './reducer.types';
-import { resetChecklistValidationErrors } from '#PrototypeComposer/actions';
 
 function* updateParameterSaga({ payload }: ReturnType<typeof updateParameterApi>) {
   try {
-    const { parameter } = payload;
+    const { setParameterSubmitting, ...parameter } = payload;
     const { data, errors } = yield call(request, 'PATCH', apiSingleParameter(parameter.id), {
       data: { ...parameter },
     });
@@ -57,6 +57,7 @@ function* updateParameterSaga({ payload }: ReturnType<typeof updateParameterApi>
       yield put(updateParameterError(errors));
       throw getErrorMsg(errors);
     }
+    if (setParameterSubmitting) setParameterSubmitting(false);
   } catch (error) {
     console.error('error came in the updateParameterSaga :: ', error);
     yield put(
@@ -70,7 +71,7 @@ function* updateParameterSaga({ payload }: ReturnType<typeof updateParameterApi>
 
 function* addNewParameterSaga({ payload }: ReturnType<typeof addNewParameter>) {
   try {
-    const { checklistId, stageId, taskId, ...parameter } = payload;
+    const { checklistId, stageId, setParameterSubmitting, taskId, ...parameter } = payload;
 
     const { data, errors } = yield call(
       request,
@@ -104,6 +105,7 @@ function* addNewParameterSaga({ payload }: ReturnType<typeof addNewParameter>) {
     } else {
       yield* handleCatch('Parameter', 'executeParameterSaga', getErrorMsg(errors), true);
     }
+    setParameterSubmitting(false);
   } catch (errors) {
     yield* handleCatch('Parameter', 'executeParameterSaga', errors);
   }

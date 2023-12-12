@@ -23,8 +23,10 @@ export const deleteParameterError = (error: any) =>
 export const deleteParameterSuccess = (params: DeleteParameterType) =>
   actionSpreader(ParameterListActions.DELETE_PARAMETER_SUCCESS, { ...params });
 
-export const updateParameterApi = (parameter: Parameter) =>
-  actionSpreader(ParameterListActions.UPDATE_PARAMETER_API, { parameter });
+export const updateParameterApi = (params: {
+  parameter: Parameter;
+  setParameterSubmitting?: React.Dispatch<React.SetStateAction<boolean>>;
+}) => actionSpreader(ParameterListActions.UPDATE_PARAMETER_API, params);
 
 export const updateStoreParameter = (data: Parameter['data'], parameterId: Parameter['id']) =>
   actionSpreader(ParameterListActions.UPDATE_STORE_PARAMETER, {

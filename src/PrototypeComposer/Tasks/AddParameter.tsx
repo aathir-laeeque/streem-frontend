@@ -54,7 +54,7 @@ import { resetTaskParameterError } from './actions';
 import { showNotification } from '#components/Notification/actions';
 import { NotificationType } from '#components/Notification/types';
 import Tooltip from '#components/shared/Tooltip';
-import { ParameterMode } from '#types';
+import { ParameterMode, ParameterType } from '#types';
 
 export const AddParameterWrapper = styled.form`
   display: flex;
@@ -170,6 +170,7 @@ const AddParameter: FC<{ isReadOnly: boolean; id?: string; entity: ComposerEntit
   const [parameterOptions, setParameterOptions] = useState<
     { label: string | JSX.Element; value: string }[]
   >([]);
+  const [parameterSubmitting, setParameterSubmitting] = useState(false);
   const form = useForm<{
     mandatory: boolean;
     label: string;
@@ -622,8 +623,11 @@ const AddParameter: FC<{ isReadOnly: boolean; id?: string; entity: ComposerEntit
     setFormDescription('');
   };
 
+  console.log('zero check', parameterSubmitting);
+
   const onSubmit = () => {
     if (addParameter) {
+      setParameterSubmitting(true);
       const _data = getValues();
       const compactFilters = _data?.data?.propertyFilters?.fields?.filter((field) => !!field);
       if (addParameter.parameterId && currentParameter) {
@@ -648,6 +652,7 @@ const AddParameter: FC<{ isReadOnly: boolean; id?: string; entity: ComposerEntit
                 }),
               },
             }),
+            setParameterSubmitting,
           }),
         );
       } else {
@@ -687,6 +692,7 @@ const AddParameter: FC<{ isReadOnly: boolean; id?: string; entity: ComposerEntit
                   ),
                 },
               }),
+              setParameterSubmitting,
             }),
           );
         } else {
@@ -714,6 +720,7 @@ const AddParameter: FC<{ isReadOnly: boolean; id?: string; entity: ComposerEntit
                   ),
                 },
               }),
+              setParameterSubmitting,
             }),
           );
         }
@@ -858,7 +865,12 @@ const AddParameter: FC<{ isReadOnly: boolean; id?: string; entity: ComposerEntit
         {!isLabelReadOnly && (
           <>
             {activeStep === sections.length - 1 ? (
-              <Button type="submit" disabled={!isDirty || !isValid} onClick={onSubmit}>
+              <Button
+                type="submit"
+                disabled={!isDirty || !isValid || parameterSubmitting}
+                loading={parameterSubmitting}
+                onClick={onSubmit}
+              >
                 Save
               </Button>
             ) : (

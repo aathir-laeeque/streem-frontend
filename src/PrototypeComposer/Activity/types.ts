@@ -32,6 +32,7 @@ export type AddNewParameterType = {
   label: string;
   description: string;
   data?: any;
+  setParameterSubmitting: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 export type DeleteParameterType = {
