@@ -178,14 +178,15 @@ export const CommonJobPdfDetails = ({
           {parameterValues
             .sort((a, b) => a?.orderTree - b?.orderTree)
             .map((currParam) => {
-              if (currParam.response?.hidden) return null;
-
+              // parameter response is an array of responses and in case of CJF there will always be only one response.
+              if (currParam?.response?.[0]?.hidden) return null;
+              const cjfParameter = { ...currParam, response: currParam?.response?.[0] };
               return (
                 <PdfLabelGroup
                   key={currParam.id}
                   label={currParam.label}
                   value={getParameterContent(
-                    currParam,
+                    cjfParameter,
                     currParam.type === MandatoryParameter.DATE
                       ? dateFormat
                       : dateAndTimeStampFormat,
