@@ -73,8 +73,8 @@ export function createFetchList<T>(
       if (data) {
         setState((prev) => ({
           ...prev,
+          list: prev.status === 'loadingNext' ? [...(prev.list ?? []), ...data] : [...data],
           status: 'success',
-          list: [...(prev.list ?? []), ...data],
           listById: { ...prev?.listById, ...keyBy(data, 'id') },
           pagination: pageable || DEFAULT_PAGINATION,
           pagesFetched: { ...prev.pagesFetched, [page]: urlString },
