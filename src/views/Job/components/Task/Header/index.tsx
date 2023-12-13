@@ -300,7 +300,7 @@ const Header: FC<HeaderProps> = ({ task }) => {
                                   onSubmitHandler: (reason: string, closeModal: () => void) => {
                                     dispatch(
                                       jobActions.performTaskAction({
-                                        id: task.id,
+                                        id: taskExecutionId,
                                         reason,
                                         action: TaskAction.SKIP,
                                       }),
@@ -328,7 +328,7 @@ const Header: FC<HeaderProps> = ({ task }) => {
                                   onSubmitHandler: (reason: string, closeModal: () => void) => {
                                     dispatch(
                                       jobActions.performTaskAction({
-                                        id: task.id,
+                                        id: taskExecutionId,
                                         reason,
                                         action: TaskAction.COMPLETE_WITH_EXCEPTION,
                                       }),
