@@ -93,7 +93,7 @@ const Task: FC<{ task: StoreTask }> = ({ task }) => {
     state,
   } = useTypedSelector((state) => state.job);
   const location = useLocation();
-  const { verificationTaskId } = location.state || {};
+  const { taskExecutionId } = location.state || {};
 
   //state variable to track if the user is navigated to the task for parameter verification or should be approval.
   const [isNavigated, setIsNavigated] = useState(false);
@@ -106,10 +106,10 @@ const Task: FC<{ task: StoreTask }> = ({ task }) => {
       jobActions.startPollActiveStageData({ jobId: id!, stageId: task.stageId!, state: state! }),
     );
     setOpacity(1);
-    if (verificationTaskId) {
+    if (taskExecutionId) {
       dispatch(
         jobActions.navigateByTaskId({
-          id: verificationTaskId,
+          id: taskExecutionId,
         }),
       );
       setIsNavigated(true);
@@ -130,12 +130,7 @@ const Task: FC<{ task: StoreTask }> = ({ task }) => {
   const {
     parameters: parameterIds,
     parametersErrors,
-    taskExecution: {
-      correctionEnabled,
-      pauseReasons,
-      audit,
-      isUserAssignedToTask,
-    },
+    taskExecution: { correctionEnabled, pauseReasons, audit, isUserAssignedToTask },
   } = task!;
 
   const handleTaskBodyClick = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
