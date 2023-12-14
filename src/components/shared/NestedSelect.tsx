@@ -241,7 +241,8 @@ const MenuTree: FC<MenuTreeProps> = ({
       setState((prev) => ({
         ...prev,
         isLoading: false,
-        selectOptions: [...prev.selectOptions, ...awaitedOptions],
+        selectOptions:
+          pageable?.page === 0 ? awaitedOptions : [...prev.selectOptions, ...awaitedOptions],
       }));
     }
   };
