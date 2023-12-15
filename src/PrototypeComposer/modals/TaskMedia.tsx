@@ -212,6 +212,11 @@ const TaskMediaModal: FC<CommonOverlayProps<Props>> = ({
     getFileExtension(stateMediaDetails?.filename!) || '',
   );
 
+  // From array of responses of a parameter, get the response belonging to the current taskExectionId
+  const parameterResponseMedia = parameters
+    .get(parameterId)
+    ?.response?.find((res) => res.taskExecutionId === taskId)?.medias;
+
   return (
     <Wrapper
       fullScreeen={fullScreeen}
@@ -278,7 +283,15 @@ const TaskMediaModal: FC<CommonOverlayProps<Props>> = ({
                   onClick={() => {
                     if (disableNameInput || !!stateMediaDetails.name) {
                       if (isParameter && execute) {
-                        execute(omit({...stateMediaDetails, mediaId: stateMediaDetails?.mediaId || stateMediaDetails?.id || ''}, 'id'));
+                        execute(
+                          omit(
+                            {
+                              ...stateMediaDetails,
+                              mediaId: stateMediaDetails?.mediaId || stateMediaDetails?.id || '',
+                            },
+                            'id',
+                          ),
+                        );
                         closeOverlay();
                       } else {
                         if (mediaDetails?.id) {
@@ -316,16 +329,8 @@ const TaskMediaModal: FC<CommonOverlayProps<Props>> = ({
               <div
                 className="delete-media"
                 onClick={() => {
-                  console.log(
-                    'isParameter && parameterId && execute',
-                    isParameter,
-                    parameterId,
-                    execute,
-                  );
                   if (isParameter && parameterId && execute) {
-                    const updatedMedias = (
-                      parameters?.get(parameterId)?.response?.medias || []
-                    ).map((currMedia) =>
+                    const updatedMedias = (parameterResponseMedia || []).map((currMedia) =>
                       omit(
                         {
                           ...currMedia,
