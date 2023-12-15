@@ -378,7 +378,15 @@ const Header: FC<HeaderProps> = ({ task }) => {
                               primaryText: 'Yes',
                               secondaryText: 'No',
                               title: 'Repeat Task',
-                              body: <>Are you sure you want to repeat the Task?</>,
+                              body: (
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                                  <div>Are you sure you want to repeat the task ?</div>
+                                  <div>
+                                    Please note, the task will be executed with the same resource
+                                    parameters as used in the master task.
+                                  </div>
+                                </div>
+                              ),
                             },
                           }),
                         );

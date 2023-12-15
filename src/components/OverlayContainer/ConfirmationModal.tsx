@@ -16,6 +16,7 @@ const Wrapper = styled.div.attrs({})`
     z-index: 1400 !important;
     .modal {
       min-width: 400px !important;
+      max-width: 500px !important;
 
       h2 {
         color: #161616 !important;
