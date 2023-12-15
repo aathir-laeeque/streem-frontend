@@ -150,7 +150,7 @@ export const getTransformedTasks = (checklist: Checklist) => {
       let visibleTaskExecutionsCount = 0;
       task.parameters.forEach((parameter: Parameter) => {
         parameter.response.forEach((res) => {
-          let taskExecution = transformedTasks.get(res.taskExecutionId) || {
+          let taskExecution = {
             stageId: stage.id,
             ...task,
             parameters: [
