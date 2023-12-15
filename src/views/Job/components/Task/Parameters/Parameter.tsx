@@ -98,7 +98,7 @@ const Parameter: FC<ParameterProps> = ({
                       props: {
                         jobId: jobId,
                         isReadOnly: true,
-                        parameterId: parameter.id,
+                        parameterId: parameter.response.id,
                       },
                     }),
                   );

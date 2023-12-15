@@ -359,7 +359,12 @@ const ParameterVariationContent: FC<
                       id: 'location',
                       label: 'Location',
                       minWidth: 100,
-                      format: (item) => `Task ${item.stageOrderTree}.${item.taskOrderTree}`,
+                      format: (item) =>
+                        `Task ${item.stageOrderTree}.${item.taskOrderTree}${
+                          item?.taskExecutionOrderTree - 1 > 0
+                            ? `.${item.taskExecutionOrderTree - 1}`
+                            : ''
+                        }`,
                     },
                     {
                       id: 'variationType',

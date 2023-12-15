@@ -448,18 +448,19 @@ export const apiSsoRedirect = () => `${baseUrl}/auth/sso/redirect-url`;
 
 export const apiPrintJobActivity = (jobId: Job['id']) => `${baseUrl}/jobs/${jobId}/activity/print`;
 
-export const apiCreateEditParameterVariation = () => `${baseUrl}/parameters/variations`;
+export const apiCreateEditParameterVariation = () => `${baseUrl}/parameter-executions/variations`;
 
 export const apiGetParameterVariations = (jobId: Job['id']) =>
-  `${baseUrl}/parameters/variations/${jobId}/allowed`;
+  `${baseUrl}/parameter-executions/variations/${jobId}/allowed`;
 
 export const apiGetVariationsList = (jobId: Job['id']) =>
-  `${baseUrl}/parameters/variations/${jobId}`;
+  `${baseUrl}/parameter-executions/variations/${jobId}`;
 
-export const apiArchiveParameterVariation = () => `${baseUrl}/parameters/variations`;
+export const apiArchiveParameterVariation = () => `${baseUrl}/parameter-executions/variations`;
 
-export const apiGetVariationsListByParameterId = (parameterId: string) =>
-  `${baseUrl}/parameters/variations/parameter/${parameterId}`;
+export const apiGetVariationsListByParameterId = (parameterResponseId: string) =>
+  `${baseUrl}/parameter-executions/variations/parameter/${parameterResponseId}`;
+//above parameterResponseId send
 export const apiSetTaskRecurrence = (taskId: string) => `${baseUrl}/tasks/${taskId}/recurrence/set`;
 
 export const apiRemoveTaskRecurrence = (taskId: string) =>
