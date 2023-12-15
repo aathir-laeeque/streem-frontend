@@ -353,18 +353,20 @@ const ShouldBeParameter: FC<
           </span>
         ) : null}
 
-        {state.isApproved === true ? (
-          <span className="approved">
-            <CheckCircle className="icon" />
-            Observation Approved by {getFullName(state.approver)} on{' '}
-            {formatDateTime({ value: state.approvalTime! })}
-          </span>
-        ) : state.isApproved === false ? (
-          <span className="rejected">
-            <Error className="icon" />
-            Observation rejected by {getFullName(state.approver)} on{' '}
-            {formatDateTime({ value: state.approvalTime! })}
-          </span>
+        {!state.isApprovalPending ? (
+          state.isApproved === true ? (
+            <span className="approved">
+              <CheckCircle className="icon" />
+              Observation Approved by {getFullName(state.approver)} on{' '}
+              {formatDateTime({ value: state.approvalTime! })}
+            </span>
+          ) : state.isApproved === false ? (
+            <span className="rejected">
+              <Error className="icon" />
+              Observation rejected by {getFullName(state.approver)} on{' '}
+              {formatDateTime({ value: state.approvalTime! })}
+            </span>
+          ) : null
         ) : null}
 
         <div className="parameter-text" style={{ width: '100%' }} data-for={parameter.id}>
