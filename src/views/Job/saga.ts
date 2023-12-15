@@ -26,6 +26,7 @@ import {
   TaskAction,
   TaskErrors,
   TaskExecution,
+  TaskExecutionType,
 } from '#types';
 import {
   apiAcceptVerification,
@@ -435,7 +436,7 @@ function* performTaskActionSaga({ payload }: ReturnType<typeof jobActions.perfor
       );
     }
 
-    if (task?.enableRecurrence) {
+    if (task?.enableRecurrence && taskExecution?.continueRecurrence) {
       if (isCompleteAction && data?.continueRecurrence) {
         yield put(
           showNotification({
@@ -548,6 +549,9 @@ function* endTaskRecurrenceSaga({ payload }: ReturnType<typeof jobActions.endTas
   try {
     const { taskExecutionId } = payload;
 
+    const { taskExecutions }: RootState['job'] = yield select((state: RootState) => state.job);
+    const taskExecution = taskExecutions.get(taskExecutionId);
+
     const { data, errors } = yield call(request, 'PATCH', apiEndTaskRecurrence(taskExecutionId));
 
     if (data) {
@@ -557,6 +561,14 @@ function* endTaskRecurrenceSaga({ payload }: ReturnType<typeof jobActions.endTas
           msg: 'Recurrence Ended. No new recurring task can be created.',
         }),
       );
+
+      if (taskExecution?.previous && taskExecution?.type === TaskExecutionType.RECURRING) {
+        yield put(
+          jobActions.navigateByTaskId({
+            id: taskExecution?.previous,
+          }),
+        );
+      }
     }
 
     if (errors) {

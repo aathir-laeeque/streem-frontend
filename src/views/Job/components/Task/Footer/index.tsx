@@ -101,6 +101,7 @@ const Footer: FC<FooterProps> = ({ task }) => {
     correctionEnabled,
     id: taskExecutionId,
     isUserAssignedToTask,
+    continueRecurrence,
     recurringExpectedStartedAt,
     recurringExpectedDueAt,
     schedulingExpectedDueAt,
@@ -277,7 +278,7 @@ const Footer: FC<FooterProps> = ({ task }) => {
           modalTitle = 'Early completion';
           modalDesc = 'State your reason for early completion';
         }
-        if (task.enableRecurrence) {
+        if (task.enableRecurrence && continueRecurrence) {
           dispatch(
             openOverlayAction({
               type: OverlayNames.REASON_MODAL,
@@ -305,7 +306,7 @@ const Footer: FC<FooterProps> = ({ task }) => {
             }),
           );
         }
-      } else if (task.enableRecurrence) {
+      } else if (task.enableRecurrence && continueRecurrence) {
         handleRecurringTaskCompletion();
       } else if (
         task.enableScheduling &&
