@@ -1,7 +1,14 @@
 import { fetchComposerData, resetComposer } from '#PrototypeComposer/actions';
 import { MandatoryParameter } from '#PrototypeComposer/checklist.types';
 import { ComposerEntity } from '#PrototypeComposer/types';
-import { Button, FormGroup, LoadingContainer, StepperContainer, StyledTabs, useDrawer } from '#components';
+import {
+  Button,
+  FormGroup,
+  LoadingContainer,
+  StepperContainer,
+  StyledTabs,
+  useDrawer,
+} from '#components';
 import { useTypedSelector } from '#store';
 import { apiSingleProcessScheduler } from '#utils/apiUrls';
 import { InputTypes } from '#utils/globalTypes';
@@ -197,7 +204,10 @@ const CreateSchedularDrawer: FC<{
 }> = ({ onCloseDrawer, checklist, schedular, readOnly, setReadOnly, handleClose }) => {
   const dispatch = useDispatch();
   const [activeStep, setActiveStep] = useState(0);
-  const { data: checklistData } = useTypedSelector((state) => state.prototypeComposer);
+  const {
+    prototypeComposer: { data: checklistData },
+    schedular: { submitting },
+  } = useTypedSelector((state) => state);
   const [currentSchedular, setCurrentSchedular] = useState<any>(null);
   const formData = useRef<any>(null);
 
@@ -693,7 +703,12 @@ const CreateSchedularDrawer: FC<{
               Cancel
             </Button>
             {activeStep === sections.length - 1 ? (
-              <Button type="submit" onClick={onSubmit} disabled={!isDirty || !isValid}>
+              <Button
+                type="submit"
+                onClick={onSubmit}
+                loading={submitting}
+                disabled={!isDirty || !isValid || submitting}
+              >
                 {schedular?.value ? 'Update' : 'Create'}
               </Button>
             ) : (

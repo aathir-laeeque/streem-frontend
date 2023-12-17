@@ -30,6 +30,7 @@ function* postCreateScheduler({ payload }: ReturnType<typeof schedulerActions.sa
       );
       handleClose();
     } else {
+      yield put(schedulerActions.saveSchedulerError({ errors: response.errors }));
       throw getErrorMsg(response.errors);
     }
   } catch (error) {
@@ -123,6 +124,7 @@ function* patchEditScheduler({ payload }: ReturnType<typeof schedulerActions.mod
       );
       yield put(schedulerActions.modifySchedulerSuccess({ id: schedularId, data: response.data }));
     } else {
+      yield put(schedulerActions.modifySchedulerError({ errors: response.errors }));
       throw getErrorMsg(response.errors);
     }
   } catch (error) {

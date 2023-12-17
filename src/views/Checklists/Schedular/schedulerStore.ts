@@ -1,14 +1,14 @@
 import { generateActions } from '#store/helpers';
 import { DEFAULT_PAGINATION } from '#utils/constants';
 import { EntityBaseState } from '#views/Ontology/types';
-import { Pageable } from '#utils/globalTypes';
+import { Pageable, ResponseError } from '#utils/globalTypes';
 import { Collaborator } from '#PrototypeComposer/reviewer.types';
 import { Checklist } from '#PrototypeComposer/checklist.types';
 
 //TODO: types
 const actions = {
   saveScheduler: { data: {} as SchedulerType, handleClose: {} as () => void },
-  saveSchedulerError: {} as any,
+  saveSchedulerError: { errors: {} as ResponseError[] | undefined },
   saveSchedulerSuccess: { data: {} as SchedulerType },
   fetchSchedulers: { params: {} as SchedulerType },
   fetchSchedulersSuccess: { data: {} as SchedulerType, pageable: {} as Pageable | null },
@@ -16,6 +16,7 @@ const actions = {
   updateSchedulerList: { id: '' },
   fetchSchedulersVersionHistory: { schedularId: '' },
   modifyScheduler: { schedularId: '', data: {} as SchedulerType, handleClose: {} as () => void },
+  modifySchedulerError: { errors: {} as ResponseError[] | undefined },
   modifySchedulerSuccess: { id: '', data: {} as SchedulerType },
   fetchSchedulersVersionHistorySuccess: {
     data: {} as SchedulerType,
@@ -34,6 +35,7 @@ type SchedulerActionsType = ReturnType<typeof schedulerActions[keyof typeof sche
 const initialState: SchedulerState = {
   activeLoading: true,
   listLoading: true,
+  submitting: false,
   list: [],
   pageable: DEFAULT_PAGINATION,
   // Active used for both version history and single scheduler data
@@ -48,8 +50,14 @@ export const SchedulerReducer = (
   action: SchedulerActionsType,
 ): SchedulerState => {
   switch (action.type) {
+    case SchedulerActionsEnum.saveScheduler:
+    case SchedulerActionsEnum.modifyScheduler:
+      return { ...state, submitting: true };
+    case SchedulerActionsEnum.saveSchedulerError:
+    case SchedulerActionsEnum.modifySchedulerError:
+      return { ...state, submitting: false };
     case SchedulerActionsEnum.saveSchedulerSuccess:
-      return { ...state, list: [action.payload, ...state.list] };
+      return { ...state, submitting: false, list: [action.payload, ...state.list] };
     case SchedulerActionsEnum.fetchSchedulersSuccess:
       return { ...state, list: action.payload.data, pageable: action.payload.pageable };
 
@@ -62,7 +70,7 @@ export const SchedulerReducer = (
     case SchedulerActionsEnum.modifySchedulerSuccess:
       const { id, data } = action.payload;
       const listUpdated = state.list.filter((item: any) => item.id !== id);
-      return { ...state, list: [data, ...listUpdated] };
+      return { ...state, submitting: false, list: [data, ...listUpdated] };
 
     case SchedulerActionsEnum.fetchChecklistInfoSuccess:
       return { ...state, checklistInfo: action.payload.data };
@@ -109,6 +117,7 @@ type ChecklistInfo = Pick<
 
 export interface SchedulerState extends EntityBaseState<SchedulerType> {
   checklistInfo: ChecklistInfo | null;
+  submitting: boolean;
 }
 
 export default { schedulerActions, SchedulerActionsEnum };
