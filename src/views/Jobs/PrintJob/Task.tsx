@@ -133,6 +133,14 @@ const MemoTask: FC<{
           </PdfText>
         </View>
       )}
+      {task?.taskExecution?.scheduleOverdueCompletionReason && (
+        <View>
+          <PdfText style={taskStyles.timedTask}>
+            Delayed completion for scheduled task:{' '}
+            {task.taskExecution?.scheduleOverdueCompletionReason}
+          </PdfText>
+        </View>
+      )}
       {task.medias &&
         !!task.medias.length &&
         (task?.taskExecution?.state === TaskExecutionState.COMPLETED ||
