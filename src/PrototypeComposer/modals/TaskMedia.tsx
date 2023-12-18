@@ -80,6 +80,26 @@ const Wrapper = styled.div<{
                 .media-details {
                   padding: 24px;
 
+                  .title-text {
+                    color: #ccc;
+                    font-size: 12px;
+                  }
+                  .title-container {
+                    height: 60px;
+                    overflow: scroll;
+                    overflow-x: hidden;
+                    margin: 10px 0;
+
+                    div {
+                      position: static;
+                      color: #ccc;
+                    }
+
+                    span {
+                      font-size: 14px;
+                    }
+                  }
+
                   ${disableDescInput
                     ? css`
                         .input-label {
@@ -241,7 +261,15 @@ const TaskMediaModal: FC<CommonOverlayProps<Props>> = ({
 
           <div className="right-side">
             <div className="media-details">
-              {(!disableNameInput || (disableNameInput && stateMediaDetails.name)) && (
+              {(!disableNameInput || (disableNameInput && stateMediaDetails.name)) &&
+              (disableNameInput || disableDescInput) ? (
+                <div>
+                  <div className="title-text">{isImage ? 'Photo name' : 'File name'}</div>
+                  <div className="title-container">
+                    <span>{stateMediaDetails.name}</span>
+                  </div>
+                </div>
+              ) : (
                 <TextInput
                   defaultValue={stateMediaDetails.name}
                   error={errors.name}
