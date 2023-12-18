@@ -383,7 +383,11 @@ const ObjectView: FC<TabContentProps> = ({
   });
   const dateTimeInputs = useRef<Record<string, string>>({});
   const isArchived = selectedObject?.usageStatus === 7;
-  const isReadOnly = readOnly || !checkPermission(['ontology', 'editObject']) || !id || isArchived;
+  const isReadOnly =
+    readOnly ||
+    !checkPermission(['ontology', label ? 'createObjectByAutomation' : 'editObject']) ||
+    !id ||
+    isArchived;
   const isEditing = id && id !== 'new';
 
   const parseData = (data: Record<string, Record<string, string>>) => {

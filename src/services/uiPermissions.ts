@@ -181,6 +181,13 @@ const uiPermissions: Record<string, any> = {
       roles.CHECKLIST_PUBLISHER,
       roles.SUPERVISOR,
     ],
+    createObjectByAutomation: [
+      roles.ACCOUNT_OWNER,
+      roles.FACILITY_ADMIN,
+      roles.CHECKLIST_PUBLISHER,
+      roles.SUPERVISOR,
+      roles.OPERATOR,
+    ],
     archiveObject: [
       roles.ACCOUNT_OWNER,
       roles.FACILITY_ADMIN,
