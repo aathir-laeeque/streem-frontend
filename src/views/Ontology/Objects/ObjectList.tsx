@@ -286,6 +286,7 @@ const ObjectList: FC<TabContentProps> = () => {
               onLabel="Showing Archived"
               checked={filters.usageStatus === 7}
               onChange={(isChecked) => {
+                navigate(`?page=${DEFAULT_PAGE_NUMBER}`, { replace: true });
                 setFilters((currentFilters) => ({
                   ...currentFilters,
                   usageStatus: isChecked ? 7 : 1,
