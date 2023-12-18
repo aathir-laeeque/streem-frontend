@@ -127,6 +127,7 @@ const DynamicContent: FC<TabContentProps> = ({ values }) => {
   const { columns, showDrawer, viewDetails, isChanged } = state;
 
   const resourceParameterChoicesMap = useRef(logsResourceChoicesMapper(list));
+  const [rowsLoading, setRowsLoading] = useState(true);
 
   const compareKeys = (key: keyof CustomView, _viewDetails = viewDetails) => {
     let _isChanged = isChanged;
@@ -164,6 +165,7 @@ const DynamicContent: FC<TabContentProps> = ({ values }) => {
 
   const fetchData = (params: fetchDataParams = {}) => {
     const { page = DEFAULT_PAGE_NUMBER, size = DEFAULT_PAGE_SIZE, filters = filterFields } = params;
+    setRowsLoading(true);
     if (id)
       dispatch(
         fetchProcessLogs({
@@ -215,6 +217,16 @@ const DynamicContent: FC<TabContentProps> = ({ values }) => {
       }));
     }
   }, [data?.jobLogColumns, viewDetails?.columns]);
+
+  useEffect(() => {
+    if (list.length) {
+      resourceParameterChoicesMap.current = {
+        ...resourceParameterChoicesMap.current,
+        ...logsResourceChoicesMapper(list),
+      };
+      setRowsLoading(false);
+    }
+  }, [list]);
 
   const onResetToDefault = () => {
     setState((prev) => ({
@@ -339,7 +351,7 @@ const DynamicContent: FC<TabContentProps> = ({ values }) => {
           )}
         </div>
         <LoadingContainer
-          loading={loading || logsLoading}
+          loading={loading || logsLoading || rowsLoading}
           component={
             <>
               <DataTable

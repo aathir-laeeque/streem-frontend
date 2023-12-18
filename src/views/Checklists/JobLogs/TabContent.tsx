@@ -226,9 +226,11 @@ const Logs: FC<TabContentProps> = ({ values }) => {
   const { columns } = state;
   const { selectedFacility } = useTypedSelector((state) => state.auth);
   const resourceParameterChoicesMap = useRef(logsResourceChoicesMapper(list));
+  const [rowsLoading, setRowsLoading] = useState(true);
 
   const fetchData = (params: fetchDataParams = {}) => {
     const { page = DEFAULT_PAGE_NUMBER, size = DEFAULT_PAGE_SIZE, filters = [] } = params;
+    setRowsLoading(true);
     if (id)
       dispatch(
         fetchProcessLogs({
@@ -271,14 +273,18 @@ const Logs: FC<TabContentProps> = ({ values }) => {
 
   useEffect(() => {
     if (list.length) {
-      resourceParameterChoicesMap.current = logsResourceChoicesMapper(list);
+      resourceParameterChoicesMap.current = {
+        ...resourceParameterChoicesMap.current,
+        ...logsResourceChoicesMapper(list),
+      };
+      setRowsLoading(false);
     }
   }, [list]);
 
   return (
     <JobLogsTabWrapper>
       <LoadingContainer
-        loading={loading}
+        loading={loading || rowsLoading}
         component={
           <TabContentWrapper>
             <DataTable
