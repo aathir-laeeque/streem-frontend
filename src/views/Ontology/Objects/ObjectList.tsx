@@ -20,24 +20,26 @@ import { TabContentWrapper } from '#views/Jobs/ListView/styles';
 import { MenuItem } from '@material-ui/core';
 import { ArrowDropDown, CropFree } from '@material-ui/icons';
 import { navigate, useLocation } from '@reach/router';
-import React, { FC, MouseEvent, useEffect, useRef, useState } from 'react';
+import React, { FC, MouseEvent, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import {
   archiveObject,
   fetchObjects,
   fetchQrShortCodeData,
-  resetOntology,
   setActiveObject,
   unarchiveObject,
 } from '../actions';
 import { Choice, Object, ObjectTypeProperty } from '../types';
 import AddEditObjectDrawer from './components/AddEditObjectDrawer';
+import filterIcon from '#assets/svg/FilterIcon.svg';
+import ObjectFiltersDrawer from './Overlays/ObjectFiltersDrawer';
 
 const ObjectList: FC<TabContentProps> = () => {
   const dispatch = useDispatch();
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const page = searchParams.get('page');
+  const objectFilters = searchParams.get('filters');
   const {
     objectTypes: { active },
     objects: { list, listLoading, pageable },
@@ -48,6 +50,7 @@ const ObjectList: FC<TabContentProps> = () => {
     usageStatus: 1,
   });
   const [showAddEditObjectDrawer, setShowAddEditObjectDrawer] = useState(false);
+  const [showFiltersDrawer, setShowFiltersDrawer] = useState(false);
   const properties = active?.properties || [];
   const relations = active?.relations || [];
 
@@ -70,6 +73,13 @@ const ObjectList: FC<TabContentProps> = () => {
   useEffect(() => {
     fetchData({ page });
   }, [filters, page]);
+
+  useEffect(() => {
+    if (objectFilters) {
+      const filters = JSON.parse(objectFilters);
+      setFilters(filters);
+    }
+  }, []);
 
   const createColumnValue = (label: string, item: any, primary = false) =>
     primary ? (
@@ -293,6 +303,12 @@ const ObjectList: FC<TabContentProps> = () => {
                 }));
               }}
             />
+            <div className="filter-buttons-wrapper" onClick={() => setShowFiltersDrawer(true)}>
+              <img className="icon" src={filterIcon} />
+              {filters?.filters?.fields?.length > 0 && (
+                <span>{`(${filters?.filters?.fields?.length})`}</span>
+              )}
+            </div>
             {checkPermission(['ontology', 'createObject']) && (
               <Button
                 id="create"
@@ -332,6 +348,14 @@ const ObjectList: FC<TabContentProps> = () => {
                 id: 'new',
               }}
               onCreate={() => fetchData({ page: pageable.page })}
+            />
+          )}
+          {active && showFiltersDrawer && (
+            <ObjectFiltersDrawer
+              setShowFiltersDrawer={setShowFiltersDrawer}
+              activeObjectType={active}
+              onApplyFilters={setFilters}
+              existingFilters={filters}
             />
           )}
         </TabContentWrapper>
