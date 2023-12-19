@@ -1,8 +1,9 @@
-import { Parameter, TargetEntityType } from '#PrototypeComposer/checklist.types';
-import { Button, LoadingContainer, StyledTabs, useDrawer } from '#components';
+import { Media, Parameter } from '#PrototypeComposer/checklist.types';
+import { Button, CustomTag, LoadingContainer, StyledTabs, useDrawer } from '#components';
+import { openLinkInNewTab } from '#utils';
 import { apiJobInfo, apiSingleProcessScheduler } from '#utils/apiUrls';
 import { InputTypes } from '#utils/globalTypes';
-import { getParameterContent } from '#utils/parameterUtils';
+import { fileTypeCheck, getParameterContent } from '#utils/parameterUtils';
 import { request } from '#utils/request';
 import { formatDateTime } from '#utils/timeUtils';
 import { ReadOnlyGroup } from '#views/Ontology/ObjectTypes';
@@ -75,6 +76,18 @@ const JobInfoDrawerWrapper = styled.div`
       line-height: 1.14;
       letter-spacing: 0.16px;
       color: #c2c2c2;
+    }
+
+    .read-only-group-media > .read-only > .content:last-child {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .media-list-item {
+      color: #1d84ff;
+      font-size: 14px;
+      cursor: pointer;
     }
   }
 
@@ -251,6 +264,64 @@ const JobInfoDrawer: FC<{
                       ]}
                     />
                   </div>
+                  {(jobInfo.state === 'COMPLETED' ||
+                    jobInfo.state === 'COMPLETED_WITH_EXCEPTION') &&
+                    jobInfo.jobAnnotationDto && (
+                      <div className="job-summary">
+                        <h4>Annotation Information</h4>
+                        <ReadOnlyGroup
+                          className="read-only-group"
+                          items={[
+                            {
+                              label: 'Remarks',
+                              value: jobInfo.jobAnnotationDto.remarks,
+                            },
+                          ]}
+                        />
+                        <ReadOnlyGroup
+                          className="read-only-group read-only-group-media"
+                          items={[
+                            {
+                              label: 'Medias',
+                              value: jobInfo.jobAnnotationDto.medias.map(
+                                (media: Media, index: number) => {
+                                  const mediaType = media?.type?.split('/')[1];
+                                  const isImage = fileTypeCheck(['png', 'jpg', 'jpeg'], mediaType);
+                                  if (media?.archived === false) {
+                                    return (
+                                      <CustomTag
+                                        as={isImage ? 'a' : 'div'}
+                                        target={isImage ? '_blank' : undefined}
+                                        href={isImage ? media.link : undefined}
+                                        key={index}
+                                        onClick={
+                                          isImage
+                                            ? undefined
+                                            : () => {
+                                                const queryString = new URLSearchParams({
+                                                  link: media.link,
+                                                }).toString();
+                                                openLinkInNewTab(
+                                                  `/jobs/${job.id}/fileUpload/print?${queryString}`,
+                                                );
+                                              }
+                                        }
+                                      >
+                                        <span className="media-list-item">
+                                          {media.originalFilename}
+                                        </span>
+                                      </CustomTag>
+                                    );
+                                  } else {
+                                    return null;
+                                  }
+                                },
+                              ),
+                            },
+                          ]}
+                        />
+                      </div>
+                    )}
                 </div>
               )
             }

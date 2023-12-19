@@ -23,6 +23,7 @@ const JobLogsTabWrapper = styled.div`
   justify-content: center;
   .file-links {
     display: flex;
+    flex-direction: column;
     a {
       margin-right: 8px;
     }

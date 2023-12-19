@@ -152,6 +152,14 @@ const uiPermissions: Record<string, any> = {
       roles.SUPERVISOR,
     ],
   },
+  jobs: {
+    jobAnnotation: [
+      roles.ACCOUNT_OWNER,
+      roles.FACILITY_ADMIN,
+      roles.CHECKLIST_PUBLISHER,
+      roles.SUPERVISOR,
+    ],
+  },
   home: [
     roles.ACCOUNT_OWNER,
     roles.FACILITY_ADMIN,

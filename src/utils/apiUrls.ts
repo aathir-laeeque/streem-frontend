@@ -475,3 +475,8 @@ export const apiTaskSchedule = (taskId: string) => `${baseUrl}/tasks/${taskId}/s
 
 export const apiRemoveTaskSchedule = (taskId: string) =>
   `${baseUrl}/tasks/${taskId}/schedules/unset`;
+
+export const apiGetJobAnnotation = (jobId: Job['id']) => `${baseUrl}/jobs/annotations/${jobId}`;
+
+export const apiPostPatchJobAnnotation = (jobId?: Job['id']) =>
+  `${baseUrl}/jobs/annotations${jobId ? `/${jobId}` : ``}`;

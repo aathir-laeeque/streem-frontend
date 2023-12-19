@@ -94,6 +94,23 @@ const JobHeaderButtons: FC = () => {
         >
           Download Job
         </MenuItem>
+        {(isCompleted || isCompletedWithException) && checkPermission(['jobs', 'jobAnnotation']) && (
+          <MenuItem
+            onClick={() => {
+              dispatch(
+                openOverlayAction({
+                  type: OverlayNames.ADD_REMARK_MODAL,
+                  props: {
+                    jobId: jobId,
+                  },
+                }),
+              );
+              handleClose();
+            }}
+          >
+            Job Annotation
+          </MenuItem>
+        )}
         <MenuItem
           className="job-activities"
           onClick={() => {

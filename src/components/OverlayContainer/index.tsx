@@ -68,6 +68,7 @@ import RecurrenceExecutionModal from '#views/Job/overlays/RecurrenceExecutionMod
 import EndRecurrenceModal from '#views/Job/overlays/EndRecurrenceModal';
 import ViewReasonModal from '#views/Job/overlays/ViewReasonModal';
 import ScheduleTaskModal from '#PrototypeComposer/Overlays/ScheduleTaskModal';
+import AddRemark from '#views/Job/overlays/AddRemark';
 
 const Wrapper = styled.div``;
 
@@ -270,6 +271,8 @@ const getOverlay = (params: CommonOverlayProps<any>) => {
 
     case OverlayNames.SCHEDULE_TASK_MODAL:
       return <ScheduleTaskModal {...params} />;
+    case OverlayNames.ADD_REMARK_MODAL:
+      return <AddRemark {...params} />;
 
     default:
       return null;

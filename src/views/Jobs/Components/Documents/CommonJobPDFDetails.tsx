@@ -14,6 +14,7 @@ import { formatDateTime, formatDuration } from '#utils/timeUtils';
 import { Link, View } from '@react-pdf/renderer';
 import React, { useContext } from 'react';
 import { PrintContext } from '../../PrintJob/PrintContext';
+import { CompletedJobStates, JobStateType } from '#views/Jobs/ListView/types';
 
 export type PdfJobDataType = Job & {
   createdAt: number;
@@ -27,6 +28,7 @@ export type PdfJobDataType = Job & {
   endedBy: PartialUser | null;
   totalStages: number;
   totalTask: number;
+  jobAnnotationDto: any;
 };
 
 export const CommonJobPdfDetails = ({
@@ -52,6 +54,7 @@ export const CommonJobPdfDetails = ({
     cweDetails,
     totalStages,
     parameterValues,
+    jobAnnotationDto,
   } = jobPdfData;
 
   const {
@@ -110,6 +113,22 @@ export const CommonJobPdfDetails = ({
       : (status = 'Not Started');
 
     return status;
+  };
+
+  const getCompletedJobState = (state: JobStateType) => {
+    const isJobCompleted = state === CompletedJobStates.COMPLETED;
+    const isCompletedWithException = state === CompletedJobStates.COMPLETED_WITH_EXCEPTION;
+
+    if (isJobCompleted || isCompletedWithException) {
+      return true;
+    }
+    return false;
+  };
+
+  const getMediaDetails = (medias) => {
+    let string = '';
+    medias.forEach((media: Media) => (string = string + media.originalFilename + '\n'));
+    return string;
   };
 
   return (
@@ -196,6 +215,25 @@ export const CommonJobPdfDetails = ({
             })}
         </View>
       </PdfTab>
+
+      {getCompletedJobState(jobState) && jobAnnotationDto && (
+        <PdfTab title="Annotation">
+          <View style={{ gap: 8 }}>
+            <PdfLabelGroup label="Remarks" value={jobAnnotationDto.remarks} />
+            {jobAnnotationDto?.medias && (
+              <PdfLabelGroup
+                label="Medias"
+                value={jobAnnotationDto.medias.map((el) => (
+                  <Link src={el.link} style={commonPdfStyles.link}>
+                    {el.originalFilename}
+                    {'\n'}
+                  </Link>
+                ))}
+              />
+            )}
+          </View>
+        </PdfTab>
+      )}
 
       {cweDetails && (
         <PdfTab title="Job Completed with Exception">

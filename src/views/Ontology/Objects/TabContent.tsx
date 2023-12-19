@@ -27,6 +27,7 @@ const AuditLogsTabWrapper = styled.div`
 
   .file-links {
     display: flex;
+    flex-direction: column;
     a {
       margin-right: 8px;
     }
