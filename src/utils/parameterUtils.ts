@@ -160,12 +160,23 @@ export const getParameters = ({
   checklist?.stages?.map((stage: any) => {
     stage?.tasks?.map((task: any) => {
       task?.parameters?.map((parameter: any) => {
-        if (parameter?.response?.variations?.length) {
-          variationDetails[parameter.id] = {
-            data: parameter?.response?.variations,
-            location: `Task ${stage?.orderTree}.${task?.orderTree}`,
-            parameterId: parameter.id,
-          };
+        if (parameter?.response?.length > 0) {
+          parameter.response
+            .sort((a, b) => a.taskExecutionOrderTree - b.taskExecutionOrderTree)
+            .forEach((res) => {
+              if (res.variations?.length > 0) {
+                variationDetails[res.id] = {
+                  data: res.variations,
+                  location:
+                    res.taskExecutionOrderTree === 1
+                      ? `Task ${stage?.orderTree}.${task?.orderTree}`
+                      : `Task ${stage?.orderTree}.${task?.orderTree}.${
+                          res.taskExecutionOrderTree - 1
+                        }`,
+                  parameterId: parameter.id,
+                };
+              }
+            });
         }
         parameters[parameter.id] = parameter;
       });

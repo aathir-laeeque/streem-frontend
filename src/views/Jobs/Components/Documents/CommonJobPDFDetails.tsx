@@ -263,7 +263,7 @@ export const CommonJobPdfDetails = ({
       </PdfTab>
       {variationData && Object.keys(variationData)?.length > 0 && (
         <View>
-          <PdfText style={tableStyles.headerText}>Variation Data :</PdfText>
+          <PdfText style={tableStyles.variationHeaderText}>Variation Data :</PdfText>
           <PdfTable columns={getColumnNames()} data={getColumnValues()} />
         </View>
       )}

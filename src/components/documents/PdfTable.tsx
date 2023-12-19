@@ -28,6 +28,11 @@ export const tableStyles = StyleSheet.create({
     fontSize: 11,
     fontWeight: 700,
   },
+  variationHeaderText: {
+    fontSize: 11,
+    fontWeight: 700,
+    marginBottom: 4,
+  },
   flexWrapContainer: {
     display: 'flex',
     flexDirection: 'row',
