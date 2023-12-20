@@ -9,6 +9,8 @@ import React, { FC, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import JobHeaderButtons from './Buttons';
 import JobHeaderWrapper, { LabelValueRow } from './styles';
+import { navigate } from '@reach/router';
+import KeyboardArrowLeftOutlinedIcon from '@material-ui/icons/KeyboardArrowLeftOutlined';
 
 const JobHeader: FC = () => {
   const dispatch = useDispatch();
@@ -22,6 +24,7 @@ const JobHeader: FC = () => {
       cjfValues,
       parameters,
       code,
+      isInboxView,
     },
     auth: { userId },
   } = useTypedSelector((state) => state);
@@ -37,18 +40,30 @@ const JobHeader: FC = () => {
           <Menu />
         </div>
         <div className="job-primary-header">
-          <div>
-            <div className="checklist-name">{processName}</div>
-            <div className="job-state">
-              <FiberManualRecord
-                className="icon"
-                style={{
-                  fontSize: '8px',
-                  marginRight: '8px',
-                  color: JOB_STATES[state].color,
-                }}
-              />
-              <div>{JOB_STATES[state].title}</div>
+          <div style={{ display: 'flex', gap: '8px' }}>
+            <KeyboardArrowLeftOutlinedIcon
+              style={{ cursor: 'pointer' }}
+              onClick={() => {
+                if (isInboxView) {
+                  navigate('/inbox');
+                } else {
+                  navigate('/jobs');
+                }
+              }}
+            />
+            <div>
+              <div className="checklist-name">{processName}</div>
+              <div className="job-state">
+                <FiberManualRecord
+                  className="icon"
+                  style={{
+                    fontSize: '8px',
+                    marginRight: '8px',
+                    color: JOB_STATES[state].color,
+                  }}
+                />
+                <div>{JOB_STATES[state].title}</div>
+              </div>
             </div>
           </div>
           <JobHeaderButtons />

@@ -2,6 +2,8 @@ import useScrollSpy from '#utils/useScrollSpy';
 import { capitalize } from 'lodash';
 import React, { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
+import KeyboardArrowLeftOutlinedIcon from '@material-ui/icons/KeyboardArrowLeftOutlined';
+import { navigate } from '@reach/router';
 
 const LabelsWrapper = styled.div.attrs({
   className: 'scrollable-labels',
@@ -23,6 +25,11 @@ const LabelsWrapper = styled.div.attrs({
     font-size: 1.9dvw;
     line-height: 1.25;
     color: #333333;
+  }
+
+  .title {
+    display: flex;
+    gap: 8px;
   }
 
   .label {
@@ -155,7 +162,13 @@ export function useScrollableSections({ title, items }: useScrollableSectionsPro
 
   const renderLabels = (): JSX.Element => (
     <LabelsWrapper>
-      <h1>{title}</h1>
+      <div className="title">
+        <KeyboardArrowLeftOutlinedIcon
+          style={{ cursor: 'pointer', marginTop: '4px' }}
+          onClick={() => navigate('/users')}
+        />
+        <h1>{title}</h1>
+      </div>
       {items.map((item, index) => (
         <a
           key={`section_label_${index}`}

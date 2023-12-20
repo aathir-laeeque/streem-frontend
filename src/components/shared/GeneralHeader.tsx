@@ -4,6 +4,7 @@ import { Menu } from '@material-ui/icons';
 import React from 'react';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
+import KeyboardArrowLeftOutlinedIcon from '@material-ui/icons/KeyboardArrowLeftOutlined';
 
 const GeneralHeaderWrapper = styled.div`
   display: flex;
@@ -38,6 +39,10 @@ const GeneralHeaderWrapper = styled.div`
     display: flex;
   }
 
+  .back-button {
+    cursor: pointer;
+  }
+
   @media (max-width: 900px) {
     height: 64px;
     .drawer-toggle {
@@ -49,15 +54,22 @@ const GeneralHeaderWrapper = styled.div`
         display: none;
       }
     }
+    .back-button {
+      padding-top: 8px;
+    }
   }
 `;
 
 export const GeneralHeader = ({
   heading,
   subHeading,
+  showBackButton,
+  onBackButtonClick,
 }: {
   heading?: string;
   subHeading?: string;
+  showBackButton?: boolean;
+  onBackButtonClick?: () => void;
 }) => {
   const dispatch = useDispatch();
   return (
@@ -67,9 +79,14 @@ export const GeneralHeader = ({
           <Menu />
         </NavItem>
       </div>
-      <div className="header-meta">
-        {heading && <div className="heading">{heading}</div>}
-        {subHeading && <div className="sub-heading">{subHeading}</div>}
+      <div style={{ display: 'flex', gap: '8px' }}>
+        {showBackButton && (
+          <KeyboardArrowLeftOutlinedIcon className="back-button" onClick={onBackButtonClick} />
+        )}
+        <div className="header-meta">
+          {heading && <div className="heading">{heading}</div>}
+          {subHeading && <div className="sub-heading">{subHeading}</div>}
+        </div>
       </div>
     </GeneralHeaderWrapper>
   );

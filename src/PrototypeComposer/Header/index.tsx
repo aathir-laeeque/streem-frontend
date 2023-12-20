@@ -44,6 +44,7 @@ import {
   ChecklistStatesContent,
 } from '../checklist.types';
 import HeaderWrapper from './styles';
+import KeyboardArrowLeftOutlinedIcon from '@material-ui/icons/KeyboardArrowLeftOutlined';
 
 const ListActionMenuButton = styled(ListActionMenu)`
   .MuiPaper-root {
@@ -557,14 +558,22 @@ const ChecklistHeader: FC<ProcessInitialState> = ({
           <Menu />
         </div>
         <div className="header-content">
-          <div className="header-content-left">
-            <div className="checklist-name">{data?.name}</div>
-            <div className="checklist-state">
-              <FiberManualRecord
-                className="icon"
-                style={{ color: ChecklistStatesColors[data?.state] }}
-              />
-              <span>{ChecklistStatesContent[data?.state]}</span>
+          <div style={{ display: 'flex', gap: '8px' }}>
+            <KeyboardArrowLeftOutlinedIcon
+              style={{ cursor: 'pointer' }}
+              onClick={() =>
+                navigate(`/checklists?tab=${data?.state === ChecklistStates.PUBLISHED ? '0' : '1'}`)
+              }
+            />
+            <div className="header-content-left">
+              <div className="checklist-name">{data?.name}</div>
+              <div className="checklist-state">
+                <FiberManualRecord
+                  className="icon"
+                  style={{ color: ChecklistStatesColors[data?.state] }}
+                />
+                <span>{ChecklistStatesContent[data?.state]}</span>
+              </div>
             </div>
           </div>
 

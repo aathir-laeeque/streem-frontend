@@ -24,7 +24,7 @@ import { MenuItem } from '@material-ui/core';
 import { ArrowDropDown, Search } from '@material-ui/icons';
 import ArchiveOutlinedIcon from '@material-ui/icons/ArchiveOutlined';
 import EditOutlinedIcon from '@material-ui/icons/EditOutlined';
-import { RouteComponentProps } from '@reach/router';
+import { RouteComponentProps, navigate } from '@reach/router';
 import { debounce, startCase } from 'lodash';
 import React, { FC, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
@@ -662,7 +662,13 @@ const ObjectTypesContent = ({ id }: RouteComponentProps<{ id: string }>) => {
 
   return (
     <ViewWrapper>
-      <GeneralHeader heading={`Object Types - ${activeLoading ? '...' : active?.pluralName}`} />
+      <GeneralHeader
+        heading={`Object Types - ${activeLoading ? '...' : active?.pluralName}`}
+        showBackButton={true}
+        onBackButtonClick={() => {
+          navigate('/ontology');
+        }}
+      />
       <div className="list-table">
         {renderTabHeader()}
         <LoadingContainer loading={activeLoading} component={<>{renderTabContent()}</>} />
