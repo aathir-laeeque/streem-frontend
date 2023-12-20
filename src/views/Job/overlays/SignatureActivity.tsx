@@ -1,11 +1,14 @@
 import { BaseModal, Button } from '#components';
+import { showNotification } from '#components/Notification/actions';
+import { NotificationType } from '#components/Notification/types';
 import { CommonOverlayProps } from '#components/OverlayContainer/types';
 import React, { FC, useEffect, useRef } from 'react';
+import { useDispatch } from 'react-redux';
 import SignatureCanvas from 'react-signature-canvas';
 import styled from 'styled-components';
 
 interface SignatureModalProps {
-  user: { id: string; name: string };
+  user: { id: string; name: string; parameterMandatory: {} };
   onAcceptSignature: (imageData: string) => void;
 }
 
@@ -66,6 +69,8 @@ const SignatureModal: FC<CommonOverlayProps<SignatureModalProps>> = ({
   props: { user, onAcceptSignature },
 }) => {
   const canvasRef = useRef<any | null>(null);
+  const dispatch = useDispatch();
+  const [isDirty, setIsDirty] = React.useState(false);
 
   useEffect(() => {
     if (canvasRef && canvasRef.current) {
@@ -80,8 +85,21 @@ const SignatureModal: FC<CommonOverlayProps<SignatureModalProps>> = ({
 
   const onSuccess = () => {
     const canvas = canvasRef.current.getCanvas();
-    onAcceptSignature(canvas.toDataURL());
-    closeOverlay();
+    if (user?.parameterMandatory && !isDirty) {
+      dispatch(
+        showNotification({
+          type: NotificationType.ERROR,
+          msg: 'Please sign before submitting.',
+        }),
+      );
+    } else {
+      onAcceptSignature(canvas.toDataURL());
+      closeOverlay();
+    }
+  };
+
+  const onBegin = () => {
+    setIsDirty(true);
   };
 
   return (
@@ -102,7 +120,7 @@ const SignatureModal: FC<CommonOverlayProps<SignatureModalProps>> = ({
           </div>
         </div>
         <div className="sign-modal-body">
-          <SignatureCanvas ref={canvasRef} backgroundColor="#fafafa" />
+          <SignatureCanvas onBegin={onBegin} ref={canvasRef} backgroundColor="#fafafa" />
         </div>
         <div className="sign-modal-footer-buttons">
           <Button variant="secondary" color="red" onClick={closeOverlay}>

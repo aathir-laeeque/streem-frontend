@@ -64,6 +64,7 @@ const SignatureTaskView: FC<Omit<ParameterProps, 'taskId'>> = ({ parameter }) =>
           user: {
             id: profile?.employeeId,
             name: `${profile?.firstName} ${profile?.lastName}`,
+            parameterMandatory: parameter?.mandatory,
           },
           onAcceptSignature: (imageData: string) => onAcceptSignature(imageData),
         },

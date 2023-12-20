@@ -49,6 +49,7 @@ const Signature: FC<ParameterProps> = ({ parameter, isCorrectingError, isTaskCom
           user: {
             id: profile?.employeeId,
             name: `${profile?.firstName} ${profile?.lastName}`,
+            parameterMandatory: parameter?.mandatory,
           },
           onAcceptSignature: (imageData: string) => onAcceptSignature(imageData),
         },
