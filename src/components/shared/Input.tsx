@@ -59,36 +59,32 @@ const Wrapper = styled.div<WrapperProps>`
   flex: 1;
   flex-direction: column;
 
-  .label-wrapper {
+  .input-label {
+    align-items: center;
+    color: #525252;
     display: flex;
-
-    .input-label {
-      align-items: center;
-      color: #525252;
-      display: flex;
-      font-size: 12px;
-      justify-content: flex-start;
-      letter-spacing: 0.32px;
-      line-height: 1.33;
-      margin-bottom: 8px;
-
-      .optional-badge {
-        color: #999999;
-        font-size: 12px;
-        margin-left: 4px;
-      }
-
-      .secondary-action {
-        color: #1d84ff;
-        cursor: pointer;
-        margin-left: auto;
-      }
-    }
+    font-size: 12px;
+    justify-content: flex-start;
+    letter-spacing: 0.32px;
+    line-height: 1.33;
+    margin-bottom: 8px;
 
     .info-icon-wrapper {
       height: 16px;
       width: 16px;
       margin-left: 6px;
+    }
+
+    .optional-badge {
+      color: #999999;
+      font-size: 12px;
+      margin-left: 4px;
+    }
+
+    .secondary-action {
+      color: #1d84ff;
+      cursor: pointer;
+      margin-left: auto;
     }
   }
 
@@ -247,26 +243,24 @@ const TextInput = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
       key={key}
       onWheel={(e) => (e.target as HTMLInputElement).blur()}
     >
-      <div className="label-wrapper">
-        {label ? (
-          <label className="input-label">
-            {label}
-            {optional ? <span className="optional-badge">Optional</span> : null}
-            {secondaryAction && (
-              <span className="secondary-action" onClick={secondaryAction.action}>
-                {secondaryAction.text}
-              </span>
-            )}
-          </label>
-        ) : null}
-        {tooltipLabel && (
-          <span className="info-icon-wrapper">
-            <CustomTooltip title={tooltipLabel} arrow placement="right">
-              <img src={InfoIcon}></img>
-            </CustomTooltip>
-          </span>
-        )}
-      </div>
+      {label ? (
+        <label className="input-label">
+          {label}
+          {tooltipLabel && (
+            <span className="info-icon-wrapper">
+              <CustomTooltip title={tooltipLabel} arrow placement="right">
+                <img src={InfoIcon}></img>
+              </CustomTooltip>
+            </span>
+          )}
+          {optional ? <span className="optional-badge">Optional</span> : null}
+          {secondaryAction && (
+            <span className="secondary-action" onClick={secondaryAction.action}>
+              {secondaryAction.text}
+            </span>
+          )}
+        </label>
+      ) : null}
 
       <div className="input-wrapper">
         {BeforeElement ? (

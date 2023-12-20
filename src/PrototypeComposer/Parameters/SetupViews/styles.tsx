@@ -16,7 +16,7 @@ export const CommonWrapper = styled.div`
       column-gap: 16px;
 
       > svg {
-        margin-top: 18px;
+        margin-top: 24px;
       }
 
       .input-label {

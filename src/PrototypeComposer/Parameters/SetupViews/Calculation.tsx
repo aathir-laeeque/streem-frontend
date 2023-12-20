@@ -334,21 +334,23 @@ const CalculationParameter: FC<{ form: UseFormMethods<any>; isReadOnly: boolean 
           ref={register}
         />
       </div>
-      <ul className="list" {...(isReadOnly && { style: { marginBottom: '16px' } })}>
-        {Object.entries(variables).map(([variableName, value]: [string, any], index) => {
-          return (
-            <MapVariable
-              key={index}
-              variableName={variableName}
-              value={value}
-              isReadOnly={isReadOnly}
-              onRemoveVariable={onRemoveVariable}
-              onParameterSelect={onParameterSelect}
-              onVariableNameChange={onVariableNameChange}
-            />
-          );
-        })}
-      </ul>
+      {Object.entries(variables).length > 0 && (
+        <ul className="list" {...(isReadOnly && { style: { marginBottom: '16px' } })}>
+          {Object.entries(variables).map(([variableName, value]: [string, any], index) => {
+            return (
+              <MapVariable
+                key={index}
+                variableName={variableName}
+                value={value}
+                isReadOnly={isReadOnly}
+                onRemoveVariable={onRemoveVariable}
+                onParameterSelect={onParameterSelect}
+                onVariableNameChange={onVariableNameChange}
+              />
+            );
+          })}
+        </ul>
+      )}
       {!isReadOnly && (
         <Button
           type="button"
