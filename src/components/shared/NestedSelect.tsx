@@ -53,7 +53,6 @@ const StyledSelect = styled(Select)<{ width: string }>`
   }
   .nested-select-search > div {
     background-color: #f4f4f4;
-    border: 2px solid;
   }
 `;
 
