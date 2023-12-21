@@ -608,7 +608,7 @@ const ScheduleTaskModal: FC<CommonOverlayProps<ScheduleTaskModalProps>> = ({
                     </p>
                   </div>
 
-                  {(startDateInterval || dueDateInterval) && (
+                  {startDateInterval || dueDateInterval ? (
                     <div className="scheduler-summary">
                       <h4>Summary</h4>
                       <ReadOnlyGroup
@@ -625,7 +625,7 @@ const ScheduleTaskModal: FC<CommonOverlayProps<ScheduleTaskModalProps>> = ({
                         ]}
                       />
                     </div>
-                  )}
+                  ) : null}
                 </div>
               )}
             </div>
