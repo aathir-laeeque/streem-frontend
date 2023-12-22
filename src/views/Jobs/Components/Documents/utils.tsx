@@ -19,6 +19,7 @@ import { Style } from '@react-pdf/types';
 import { parseHTML } from 'linkedom';
 import { capitalize } from 'lodash';
 import React, { useContext } from 'react';
+import { Task, TaskExecution, TaskExecutionType } from '../../../../types/task';
 
 const renderVerificationText = (
   verificationData: any[],
@@ -412,4 +413,81 @@ export const getParameterDetails = (parameter: any, taskState: string) => {
       </View>
     </View>
   );
+};
+
+export const getTaskExceptionDetails = (task, stageOrderTree) => {
+  const taskExceptions = {};
+
+  const exceptionLabel = (taskExecution) => {
+    return taskExecution.type === TaskExecutionType.MASTER
+      ? `E ${stageOrderTree}.${task.orderTree}`
+      : `E ${stageOrderTree}.${task.orderTree}.${parseInt(taskExecution.orderTree) - 1}`;
+  };
+
+  task.taskExecutions.forEach((taskExecution) => {
+    const label = exceptionLabel(taskExecution);
+
+    const addException = (exceptionDetail) => {
+      if (!taskExceptions[label]) {
+        taskExceptions[label] = [];
+      }
+      taskExceptions[label].push(exceptionDetail);
+    };
+
+    if (taskExecution.reason) {
+      if (task.timed) {
+        addException({
+          exception: 'Timed Task Reason',
+          reason: taskExecution.reason,
+        });
+      } else if (taskExecution.state === TaskExecutionState.COMPLETED_WITH_EXCEPTION) {
+        addException({
+          exception: 'Completed With Exception',
+          reason: taskExecution.reason,
+        });
+      } else if (taskExecution?.state === TaskExecutionState.SKIPPED) {
+        addException({
+          exception: 'Task Skipped',
+          reason: taskExecution.reason,
+        });
+      }
+    }
+
+    if (taskExecution.correctionEnabled || taskExecution.correctionReason) {
+      if (taskExecution.correctionEnabled) {
+        addException({
+          exception: 'Error Correction is Enabled, Reason',
+          reason: taskExecution.correctionReason,
+        });
+      } else {
+        addException({
+          exception: 'Correction Reason',
+          reason: taskExecution.correctionReason,
+        });
+      }
+    }
+
+    if (taskExecution?.recurringPrematureStartReason) {
+      addException({
+        exception: 'Early start for recurring task',
+        reason: taskExecution.recurringPrematureStartReason,
+      });
+    }
+
+    if (taskExecution?.recurringOverdueCompletionReason) {
+      addException({
+        exception: 'Delayed completion for recurring task',
+        reason: taskExecution.recurringOverdueCompletionReason,
+      });
+    }
+
+    if (taskExecution?.scheduleOverdueCompletionReason) {
+      addException({
+        exception: 'Delayed completion for scheduled task',
+        reason: taskExecution.scheduleOverdueCompletionReason,
+      });
+    }
+  });
+
+  return taskExceptions;
 };

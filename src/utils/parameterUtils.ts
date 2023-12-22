@@ -248,6 +248,8 @@ export const getTransformedTasks = (checklist: Checklist) => {
 
       if (visibleTaskExecutionsCount !== 0) {
         visibleTasksCount++;
+      } else {
+        hiddenIds[task.id] = true;
       }
     });
 

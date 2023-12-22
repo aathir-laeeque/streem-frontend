@@ -62,7 +62,11 @@ export const PdfTable: FC<TPdfTable> = ({ data, columns }) => {
       <View style={tableStyles.row} fixed>
         {columns.map((column) => (
           <View style={tableStyles.column} key={column.id}>
-            <PdfText style={tableStyles.headerText}>{column.name}</PdfText>
+            {typeof column.name === 'string' ? (
+              <PdfText style={tableStyles.headerText}>{column.name}</PdfText>
+            ) : (
+              column.name
+            )}
           </View>
         ))}
       </View>

@@ -95,18 +95,26 @@ export const JobPdf: FC<any> = ({
                     <PdfText style={styles.stageName}>{stage.name}</PdfText>
                   </View>
                   {(stage.tasks as unknown as Array<any>).map((task) => {
-                    return task.taskExecutions.map((taskExecution) => {
-                      if (hiddenIds[taskExecution.id] === undefined) {
-                        const _task = transformedTasks.get(taskExecution.id);
+                    if (task.enableRecurrence) {
+                      if (hiddenIds[task.id] === undefined) {
                         return (
-                          <TaskView
-                            task={_task}
-                            stageOrderTree={stage.orderTree}
-                            key={taskExecution.id}
-                          />
+                          <TaskView task={task} stageOrderTree={stage.orderTree} key={task.id} />
                         );
                       }
-                    });
+                    } else {
+                      return task.taskExecutions.map((taskExecution) => {
+                        if (hiddenIds[taskExecution.id] === undefined) {
+                          const _task = transformedTasks.get(taskExecution.id);
+                          return (
+                            <TaskView
+                              task={_task}
+                              stageOrderTree={stage.orderTree}
+                              key={taskExecution.id}
+                            />
+                          );
+                        }
+                      });
+                    }
                   })}
                 </View>
               );
