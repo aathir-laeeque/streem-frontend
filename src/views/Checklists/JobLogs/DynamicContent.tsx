@@ -224,8 +224,8 @@ const DynamicContent: FC<TabContentProps> = ({ values }) => {
         ...resourceParameterChoicesMap.current,
         ...logsResourceChoicesMapper(list),
       };
-      setRowsLoading(false);
     }
+    setRowsLoading(false);
   }, [list]);
 
   const onResetToDefault = () => {
