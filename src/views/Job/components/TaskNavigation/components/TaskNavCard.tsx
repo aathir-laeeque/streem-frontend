@@ -8,7 +8,6 @@ import taskRecurrenceIcon from '#assets/svg/task-recurrence-icon.svg';
 import AccordianIcon from '#assets/svg/accordianIcon.svg';
 import repeatIcon from '#assets/svg/repeatIcon.svg';
 import taskRecurrenceIconDisabled from '#assets/svg/task-recurrence-grey.svg';
-import repeatTaskIcon from '#assets/svg/repeat-task-icon.svg';
 import arrowIcon from '#assets/svg/arrow-background.svg';
 import Tooltip from '#components/shared/Tooltip';
 import { checkJobExecutionDelay, formatDateTime, getEpochTimeDifference } from '#utils/timeUtils';

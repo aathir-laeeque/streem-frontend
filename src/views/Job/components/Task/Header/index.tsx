@@ -407,26 +407,24 @@ const Header: FC<HeaderProps> = ({ task }) => {
                       Remove Repeated Task
                     </MenuItem>
                   )}
-                  {(!isTaskStarted || type === TaskExecutionType.MASTER) &&
-                    enableRecurrence &&
-                    continueRecurrence && (
-                      <MenuItem
-                        onClick={() => {
-                          dispatch(
-                            openOverlayAction({
-                              type: OverlayNames.END_TASK_RECURRENCE_MODAL,
-                              props: {
-                                onPrimary: () => {
-                                  dispatch(jobActions.endTaskRecurrence({ taskExecutionId }));
-                                },
+                  {enableRecurrence && continueRecurrence && (
+                    <MenuItem
+                      onClick={() => {
+                        dispatch(
+                          openOverlayAction({
+                            type: OverlayNames.END_TASK_RECURRENCE_MODAL,
+                            props: {
+                              onPrimary: () => {
+                                dispatch(jobActions.endTaskRecurrence({ taskExecutionId }));
                               },
-                            }),
-                          );
-                        }}
-                      >
-                        End Recurrence
-                      </MenuItem>
-                    )}
+                            },
+                          }),
+                        );
+                      }}
+                    >
+                      End Recurrence
+                    </MenuItem>
+                  )}
                 </StyledMenu>
               </>
             )}
