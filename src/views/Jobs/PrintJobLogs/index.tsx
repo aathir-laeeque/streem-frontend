@@ -99,7 +99,7 @@ const Download: FC<any> = ({ viewId }) => {
           field.field,
         )
       ) {
-        fieldsVisualMap[field.field] = {
+        fieldsVisualMap[`${field.field}_${field.values[0]}`] = {
           label: field.field,
           value: field.values[0],
           op: field.op,
@@ -108,18 +108,18 @@ const Download: FC<any> = ({ viewId }) => {
         if (fieldId[0] === 'parameterValues') {
           const parameterId = fieldId[1];
           const parameter = parameterList.find((p) => p.id === parameterId);
-          fieldsVisualMap[field.field] = {
-            ...fieldsVisualMap[field.field],
+          fieldsVisualMap[`${field.field}_${field.values[0]}`] = {
+            ...fieldsVisualMap[`${field.field}_${field.values[0]}`],
             label: parameter.label,
           };
           if (parameter.type === MandatoryParameter.SINGLE_SELECT) {
             const fieldValue = parameter.data.find((d: any) => d.id === field.values[0]).name;
-            fieldsVisualMap[field.field] = {
-              ...fieldsVisualMap[field.field],
+            fieldsVisualMap[`${field.field}_${field.values[0]}`] = {
+              ...fieldsVisualMap[`${field.field}_${field.values[0]}`],
               value: fieldValue,
             };
           } else {
-            fieldsToUpdate.push(field.field);
+            fieldsToUpdate.push(`${field.field}_${field.values[0]}`);
             promises.push(request('GET', `${baseUrl}${parameter.data.urlPath}&page=0&size=250`));
           }
         } else {
