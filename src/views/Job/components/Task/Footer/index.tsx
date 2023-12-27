@@ -129,7 +129,11 @@ const Footer: FC<FooterProps> = ({ task }) => {
       );
   };
 
-  const handleRecurringTaskCompletion = (reason?: string) => {
+  const handleRecurringTaskCompletion = (params?: {
+    reason?: string;
+    scheduleOverdueCompletionReason?: string;
+  }) => {
+    const { reason = '', scheduleOverdueCompletionReason = '' } = params || {};
     if (
       type === TaskExecutionType.RECURRING &&
       getEpochTimeDifference(recurringExpectedDueAt) === 'LATE'
@@ -150,6 +154,7 @@ const Footer: FC<FooterProps> = ({ task }) => {
                         reason,
                         continueRecurrence: true,
                         recurringOverdueCompletionReason,
+                        scheduleOverdueCompletionReason,
                       });
                     },
                     onSecondary: () => {
@@ -162,6 +167,7 @@ const Footer: FC<FooterProps> = ({ task }) => {
                                 reason,
                                 continueRecurrence: false,
                                 recurringOverdueCompletionReason,
+                                scheduleOverdueCompletionReason,
                               });
                             },
                           },
@@ -182,7 +188,11 @@ const Footer: FC<FooterProps> = ({ task }) => {
           type: OverlayNames.TASK_RECURRENCE_EXECUTION_MODAL,
           props: {
             onPrimary: () => {
-              preCompleteTask({ reason, continueRecurrence: true });
+              preCompleteTask({
+                reason,
+                continueRecurrence: true,
+                scheduleOverdueCompletionReason,
+              });
             },
             onSecondary: () => {
               dispatch(
@@ -190,7 +200,11 @@ const Footer: FC<FooterProps> = ({ task }) => {
                   type: OverlayNames.END_TASK_RECURRENCE_MODAL,
                   props: {
                     onPrimary: () => {
-                      preCompleteTask({ reason, continueRecurrence: false });
+                      preCompleteTask({
+                        reason,
+                        continueRecurrence: false,
+                        scheduleOverdueCompletionReason,
+                      });
                     },
                   },
                 }),
@@ -292,15 +306,61 @@ const Footer: FC<FooterProps> = ({ task }) => {
           modalTitle = 'Early completion';
           modalDesc = 'State your reason for early completion';
         }
-        if (task.enableRecurrence && continueRecurrence) {
+
+        if (task.enableScheduling && getEpochTimeDifference(schedulingExpectedDueAt) === 'LATE') {
           dispatch(
             openOverlayAction({
               type: OverlayNames.REASON_MODAL,
               props: {
                 modalTitle,
                 modalDesc,
-                onSubmitHandler: (reason: string) => {
-                  handleRecurringTaskCompletion(reason);
+                onSubmitHandler: (reason: string, closeModal: () => void) => {
+                  closeModal();
+                  setTimeout(() => {
+                    dispatch(
+                      openOverlayAction({
+                        type: OverlayNames.REASON_MODAL,
+                        props: {
+                          modalTitle: 'Scheduled Task Overdue',
+                          modalDesc:
+                            'This task is overdue. Kindly provide the reason for the delay in its execution.',
+                          onSubmitHandler: (
+                            scheduleOverdueCompletionReason: string,
+                            closeModal: () => void,
+                          ) => {
+                            if (task.enableRecurrence && continueRecurrence) {
+                              closeModal();
+                              setTimeout(() => {
+                                handleRecurringTaskCompletion({
+                                  reason,
+                                  scheduleOverdueCompletionReason,
+                                });
+                              }, 0);
+                            } else {
+                              preCompleteTask({ reason, scheduleOverdueCompletionReason });
+                              closeModal();
+                            }
+                          },
+                        },
+                      }),
+                    );
+                  }, 0);
+                },
+              },
+            }),
+          );
+        } else if (task.enableRecurrence && continueRecurrence) {
+          dispatch(
+            openOverlayAction({
+              type: OverlayNames.REASON_MODAL,
+              props: {
+                modalTitle,
+                modalDesc,
+                onSubmitHandler: (reason: string, closeModal: () => void) => {
+                  closeModal();
+                  setTimeout(() => {
+                    handleRecurringTaskCompletion({ reason });
+                  }, 0);
                 },
               },
             }),
@@ -320,29 +380,51 @@ const Footer: FC<FooterProps> = ({ task }) => {
             }),
           );
         }
-      } else if (task.enableRecurrence && continueRecurrence) {
-        handleRecurringTaskCompletion();
       } else if (
         task.enableScheduling &&
         getEpochTimeDifference(schedulingExpectedDueAt) === 'LATE'
       ) {
-        dispatch(
-          openOverlayAction({
-            type: OverlayNames.REASON_MODAL,
-            props: {
-              modalTitle: 'Scheduled Task Overdue',
-              modalDesc:
-                'This task is overdue. Kindly provide the reason for the delay in its execution.',
-              onSubmitHandler: (
-                scheduleOverdueCompletionReason: string,
-                closeModal: () => void,
-              ) => {
-                preCompleteTask({ scheduleOverdueCompletionReason });
-                closeModal();
+        if (task.enableRecurrence && continueRecurrence) {
+          dispatch(
+            openOverlayAction({
+              type: OverlayNames.REASON_MODAL,
+              props: {
+                modalTitle: 'Scheduled Task Overdue',
+                modalDesc:
+                  'This task is overdue. Kindly provide the reason for the delay in its execution.',
+                onSubmitHandler: (
+                  scheduleOverdueCompletionReason: string,
+                  closeModal: () => void,
+                ) => {
+                  closeModal();
+                  setTimeout(() => {
+                    handleRecurringTaskCompletion({ scheduleOverdueCompletionReason });
+                  }, 0);
+                },
               },
-            },
-          }),
-        );
+            }),
+          );
+        } else {
+          dispatch(
+            openOverlayAction({
+              type: OverlayNames.REASON_MODAL,
+              props: {
+                modalTitle: 'Scheduled Task Overdue',
+                modalDesc:
+                  'This task is overdue. Kindly provide the reason for the delay in its execution.',
+                onSubmitHandler: (
+                  scheduleOverdueCompletionReason: string,
+                  closeModal: () => void,
+                ) => {
+                  preCompleteTask({ scheduleOverdueCompletionReason });
+                  closeModal();
+                },
+              },
+            }),
+          );
+        }
+      } else if (task.enableRecurrence && continueRecurrence) {
+        handleRecurringTaskCompletion();
       } else {
         preCompleteTask();
       }
