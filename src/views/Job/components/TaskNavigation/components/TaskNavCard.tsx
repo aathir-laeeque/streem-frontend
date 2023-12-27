@@ -269,6 +269,7 @@ const TaskNavCard: FC<{ task: any; taskNo: number; errors: string[]; stageNo: nu
                                       ? taskRecurrenceIcon
                                       : taskRecurrenceIconDisabled
                                   }
+                                  style={{ marginRight: '4px' }}
                                 />
                               </span>
                             </Tooltip>
@@ -281,7 +282,7 @@ const TaskNavCard: FC<{ task: any; taskNo: number; errors: string[]; stageNo: nu
                               textAlignment="left"
                             >
                               <span>
-                                <img src={repeatIcon} />
+                                <img src={repeatIcon} style={{ marginRight: '4px' }} />
                               </span>
                             </Tooltip>
                           ) : null}
@@ -300,7 +301,10 @@ const TaskNavCard: FC<{ task: any; taskNo: number; errors: string[]; stageNo: nu
                                   placement="right"
                                   textAlignment="left"
                                 >
-                                  <img src={scheduleTaskIconActive} />
+                                  <img
+                                    src={scheduleTaskIconActive}
+                                    style={{ marginRight: '4px' }}
+                                  />
                                 </Tooltip>
                               ) : (
                                 <Tooltip
@@ -311,7 +315,7 @@ const TaskNavCard: FC<{ task: any; taskNo: number; errors: string[]; stageNo: nu
                                   placement="right"
                                   textAlignment="left"
                                 >
-                                  <img src={scheduleTaskIcon} />
+                                  <img src={scheduleTaskIcon} style={{ marginRight: '4px' }} />
                                 </Tooltip>
                               )}
                             </span>
@@ -333,17 +337,28 @@ const TaskNavCard: FC<{ task: any; taskNo: number; errors: string[]; stageNo: nu
                                 : ''
                             }`}
                           >
-                            {formatDateTime({ value: recurringExpectedStartedAt })}
+                            {formatDateTime({
+                              value: recurringExpectedStartedAt,
+                              format: taskTimeFormat,
+                            })}
                           </span>
                           <img src={arrowIcon} />
                           {checkJobExecutionDelay(actualTaskEndDate, recurringExpectedDueAt) ? (
                             <Tooltip title={'Task is overdue'} arrow placement="right">
                               <span className="overdue-task-timing">
-                                {formatDateTime({ value: recurringExpectedDueAt })}
+                                {formatDateTime({
+                                  value: recurringExpectedDueAt,
+                                  format: taskTimeFormat,
+                                })}
                               </span>
                             </Tooltip>
                           ) : (
-                            <span>{formatDateTime({ value: recurringExpectedDueAt })}</span>
+                            <span>
+                              {formatDateTime({
+                                value: recurringExpectedDueAt,
+                                format: taskTimeFormat,
+                              })}
+                            </span>
                           )}
                         </div>
                       ) : null}
@@ -361,7 +376,10 @@ const TaskNavCard: FC<{ task: any; taskNo: number; errors: string[]; stageNo: nu
                                 : ''
                             }`}
                           >
-                            {formatDateTime(schedulingExpectedStartedAt, taskTimeFormat)}
+                            {formatDateTime({
+                              value: schedulingExpectedStartedAt,
+                              format: taskTimeFormat,
+                            })}
                           </span>
                           <img src={arrowIcon} />
                           {checkJobExecutionDelay(actualTaskEndDate, schedulingExpectedDueAt) ? (
