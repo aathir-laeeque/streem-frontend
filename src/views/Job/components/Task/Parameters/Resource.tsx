@@ -338,7 +338,7 @@ const ResourceParameter: FC<ParameterProps> = ({ parameter, isCorrectingError })
           value={value}
           placeholder="You can select one option here"
           onMenuScrollToBottom={() => {
-            if (!isLoading && !pagination?.current?.isLast) {
+            if (!isLoading && !pagination?.current?.isLast && !isTaskRepeatOrRecurring) {
               getOptions(getUrl(pagination?.current?.current + 1));
             }
           }}
