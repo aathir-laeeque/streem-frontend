@@ -27,7 +27,7 @@ type HeaderProps = {
   task: StoreTask;
 };
 
-const Header: FC<HeaderProps> = ({ task }) => {
+const Header: FC<HeaderProps> = ({ task, stage }) => {
   const dispatch = useDispatch();
   const {
     timerState: { limitCrossed },
@@ -61,11 +61,15 @@ const Header: FC<HeaderProps> = ({ task }) => {
       startedAt,
       endedBy,
       endedAt,
+      orderTree: taskExecutionOrderTree,
     },
     canSkipTask,
     enableRecurrence,
     enableScheduling,
+    orderTree,
   } = task;
+
+  const { orderTree: stageOrderTree } = stage;
 
   const handleClose = () => setAnchorEl(null);
 
@@ -128,7 +132,9 @@ const Header: FC<HeaderProps> = ({ task }) => {
       <div className="task-header">
         <div className="task-config">
           <div className="wrapper">
-            <div className="task-name">{task.name}</div>
+            <div className="task-name">{`${stageOrderTree}.${orderTree}${
+              taskExecutionOrderTree === 1 ? '' : `.${taskExecutionOrderTree - 1}`
+            } ${task.name}`}</div>
             <Timer state={state} id={taskExecutionId} />
           </div>
         </div>

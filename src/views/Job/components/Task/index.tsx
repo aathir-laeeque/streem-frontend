@@ -1,7 +1,7 @@
 import { openOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
 import { useTypedSelector } from '#store';
-import { StoreTask, TaskPauseReasons } from '#types';
+import { StoreStage, StoreTask, TaskPauseReasons } from '#types';
 import { getFullName } from '#utils/stringUtils';
 import { formatDateTime } from '#utils/timeUtils';
 import { jobActions } from '#views/Job/jobStore';
@@ -82,7 +82,7 @@ const TaskWrapper = styled.div.attrs({
   }
 `;
 
-const Task: FC<{ task: StoreTask }> = ({ task }) => {
+const Task: FC<{ task: StoreTask; stage: StoreStage }> = ({ task, stage }) => {
   const dispatch = useDispatch();
   const {
     taskNavState,
@@ -169,7 +169,7 @@ const Task: FC<{ task: StoreTask }> = ({ task }) => {
       key={taskNavState.current}
       style={{ opacity }}
     >
-      <Header task={task} />
+      <Header task={task} stage={stage} />
       <MediaCard medias={task.medias} isTaskActive={true} />
       <div className="task-body" onClick={handleTaskBodyClick}>
         {isTaskPaused && (
@@ -227,6 +227,7 @@ const TaskContainer: FC = () => {
     tasks,
     taskExecutions,
     state: jobState,
+    stages,
   } = useTypedSelector((state) => state.job);
 
   if (!jobState || !taskNavState.current) return null;
@@ -239,7 +240,9 @@ const TaskContainer: FC = () => {
 
   const _task = { ...activeTask, taskExecution: taskExecution };
 
-  return <Task task={_task} key={taskExecution.id} />;
+  const stage = stages.get(_task.stageId!);
+
+  return <Task task={_task} key={taskExecution.id} stage={stage} />;
 };
 
 export default TaskContainer;

@@ -20,6 +20,7 @@ import { ScheduledTaskCondition, ScheduledTaskType } from '#types';
 import { getUnixTime } from 'date-fns';
 import { taskStateColor, taskStateText } from '#utils/jobMethods';
 import DoneIcon from '@material-ui/icons/Done';
+import { PanTool } from '@material-ui/icons';
 
 const TaskDetailCardWrapper = styled.div.attrs({
   className: 'task-detail-card-wrapper',
@@ -404,6 +405,11 @@ const TaskNavCard: FC<{ task: any; taskNo: number; errors: string[]; stageNo: nu
                     </div>
                   </div>
                   <div className="task-detail-right">
+                    {task.hasStop && (
+                      <div>
+                        <PanTool className="icon" style={{ color: '#f2c94c', width: '16px' }} />
+                      </div>
+                    )}
                     <Tooltip title={taskStateText(state)} arrow placement="right">
                       <DoneIcon style={{ color: taskStateColor(state) }} />
                     </Tooltip>
