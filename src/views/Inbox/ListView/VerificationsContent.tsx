@@ -419,9 +419,7 @@ const VerificationsContent: FC<{
                   label: 'Action',
                   minWidth: 100,
                   format: (item) => {
-                    const taskExecutionId = parameterResponseById.get(
-                      item?.parameterValueId,
-                    )?.taskExecutionId;
+                    const taskExecutionId = item.taskExecutionId;
                     return (
                       <span
                         className="primary"
