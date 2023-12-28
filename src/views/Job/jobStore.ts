@@ -49,6 +49,7 @@ const actions = {
     recurringOverdueCompletionReason?: string;
     recurringPrematureStartReason?: string;
     scheduleOverdueCompletionReason?: string;
+    openAutomationModal?: any;
   },
   repeatTask: {} as { id: string },
   removeRepeatTask: {} as { taskExecutionId: string },
@@ -345,7 +346,7 @@ function getJobAuditLogsSuccess(draft: JobStore, payload: typeof actions.getJobA
 // REDUCER
 
 export const jobReducer = (state = initialState, action: JobActionsType) =>
-  produce(state, (draft) => { 
+  produce(state, (draft) => {
     switch (action.type) {
       case JobActionsEnum.getJob:
         draft.loading = true;

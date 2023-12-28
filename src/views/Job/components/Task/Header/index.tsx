@@ -199,7 +199,8 @@ const Header: FC<HeaderProps> = ({ task }) => {
                     openOverlayAction({
                       type: OverlayNames.AUTOMATION_TASK_MODAL,
                       props: {
-                        task: task,
+                        taskId: task.id,
+                        taskExecutionId: task?.taskExecution?.id,
                       },
                     }),
                   );

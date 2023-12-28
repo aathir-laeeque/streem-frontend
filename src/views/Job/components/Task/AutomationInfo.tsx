@@ -8,6 +8,7 @@ import { getAutomationActionTexts } from '#utils/parameterUtils';
 import React, { FC, useEffect, useState } from 'react';
 import TickIcon from '../../../../assets/svg/green-tick-icon.svg';
 import styled from 'styled-components';
+import { navigate } from '@reach/router';
 
 const Wrapper = styled.div.attrs({
   className: 'automation-info',
@@ -15,47 +16,26 @@ const Wrapper = styled.div.attrs({
   display: flex;
   flex-direction: column;
   grid-area: task-automation;
+  display: flex;
+  gap: 16px;
 
   .automation {
-    padding: 4px 0px;
-    display: flex;
-
-    .automation-text {
-      padding: 4px 0px;
-    }
-
     .automation-left-container {
-      display: flex;
-      width: calc(100% - 105px);
+      display: grid;
+      width: 100%;
+      grid-template-columns: auto 1fr auto;
+      grid-gap: 8px;
 
-      .image-container {
-        margin: 0px 4px;
+      span {
+        word-break: break-word;
       }
 
-      :first-child {
-        padding-top: 10px;
-      }
-
-      :last-child {
-        padding-bottom: 10px;
-      }
-    }
-
-    :first-child {
-      padding-top: 16px;
-    }
-
-    :last-child {
-      padding-bottom: 16px;
-    }
-
-    .link-objects {
-      width: 105px;
-      padding-top: 10px;
-
-      .link-object-url {
-        color: #1d84ff;
-        text-decoration: none;
+      .link-objects {
+        .link-object-url {
+          color: #1d84ff;
+          text-decoration: none;
+          cursor: pointer;
+        }
       }
     }
   }
@@ -71,7 +51,12 @@ type AutomationInfoProps = {
   executedSection: boolean = false;
 };
 
-const RenderAutomationInfo = ({ automation, objectTypeDisplayName, setIsAutomationPresent }) => {
+const RenderAutomationInfo = ({
+  automation,
+  parameterRefData,
+  setIsAutomationPresent,
+  parameter,
+}) => {
   useEffect(() => {
     setIsAutomationPresent(true);
   }, []);
@@ -79,7 +64,7 @@ const RenderAutomationInfo = ({ automation, objectTypeDisplayName, setIsAutomati
   return (
     <div className="automation">
       <span className="automation-text">
-        {getAutomationActionTexts(automation, null, objectTypeDisplayName)}
+        {getAutomationActionTexts(automation, null, parameterRefData, false, parameter)}
       </span>
     </div>
   );
@@ -87,9 +72,21 @@ const RenderAutomationInfo = ({ automation, objectTypeDisplayName, setIsAutomati
 
 const RenderExecutedAutomationInfo = ({
   automation,
-  objectTypeDisplayName,
+  parameterRefData,
   setIsAutomationPresent,
+  parameter,
+  closeOverlay,
 }) => {
+  const getRedirectedUrl = () => {
+    if (automation.actionDetails.objectTypeId) {
+      navigate(`/ontology/object-types/${automation?.actionDetails?.objectTypeId}`);
+    } else {
+      const objectId = parameterRefData?.data?.objectTypeId;
+      navigate(`/ontology/object-types/${objectId}`);
+    }
+    closeOverlay && closeOverlay();
+  };
+
   useEffect(() => {
     setIsAutomationPresent(true);
   }, []);
@@ -98,21 +95,18 @@ const RenderExecutedAutomationInfo = ({
     <div className="automation">
       <div className="automation-left-container">
         <img src={TickIcon} className="image-container" />
-        <span>{getAutomationActionTexts(automation, null, objectTypeDisplayName)}</span>
+        <span>{getAutomationActionTexts(automation, null, parameterRefData, true, parameter)}</span>
+        <span className="link-objects">
+          <span className="link-object-url" onClick={getRedirectedUrl}>
+            View Objects
+          </span>
+        </span>
       </div>
-      <span className="link-objects">
-        <a
-          className="link-object-url"
-          href={`/ontology/object-types/${automation.actionDetails.objectTypeId}`}
-        >
-          View Objects
-        </a>
-      </span>
     </div>
   );
 };
 
-const AutomationInfo: FC<AutomationInfoProps> = ({ task, executedSection }) => {
+const AutomationInfo: FC<AutomationInfoProps> = ({ task, executedSection, closeOverlay }) => {
   const { parameters } = useTypedSelector((state) => state.job);
   const [isAutomationPresent, setIsAutomationPresent] = useState(false);
   const { taskExecution } = task;
@@ -121,26 +115,31 @@ const AutomationInfo: FC<AutomationInfoProps> = ({ task, executedSection }) => {
     return (
       <Wrapper>
         {task.automations.map((automation) => {
-          const parameterData = parameters.get(automation.actionDetails.referencedParameterId);
-          const objectTypeDisplayName = parameterData?.data?.objectTypeDisplayName;
+          const parameterRefData = parameters.get(automation.actionDetails.referencedParameterId);
+          const parameter = parameters.get(automation?.actionDetails?.parameterId);
+
           if (executedSection) {
             if (taskExecution?.state === TaskExecutionState.NOT_STARTED) {
               return null;
             } else if (taskExecution?.state === TaskExecutionState.COMPLETED) {
               return (
                 <RenderExecutedAutomationInfo
-                  objectTypeDisplayName={objectTypeDisplayName}
+                  parameterRefData={parameterRefData}
                   automation={automation}
                   setIsAutomationPresent={setIsAutomationPresent}
+                  parameter={parameter}
+                  closeOverlay={closeOverlay}
                 />
               );
             } else {
               if (automation.triggerType === AutomationActionTriggerType.TASK_STARTED) {
                 return (
                   <RenderExecutedAutomationInfo
-                    objectTypeDisplayName={objectTypeDisplayName}
+                    parameterRefData={parameterRefData}
                     automation={automation}
                     setIsAutomationPresent={setIsAutomationPresent}
+                    parameter={parameter}
+                    closeOverlay={closeOverlay}
                   />
                 );
               } else {
@@ -150,9 +149,10 @@ const AutomationInfo: FC<AutomationInfoProps> = ({ task, executedSection }) => {
           } else {
             return (
               <RenderAutomationInfo
-                objectTypeDisplayName={objectTypeDisplayName}
+                parameterRefData={parameterRefData}
                 automation={automation}
                 setIsAutomationPresent={setIsAutomationPresent}
+                parameter={parameter}
               />
             );
           }

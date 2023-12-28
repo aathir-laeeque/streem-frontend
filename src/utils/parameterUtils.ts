@@ -1,7 +1,7 @@
 import {
   AutomationAction,
+  AutomationActionActionType,
   AutomationActionActionTypeVisual,
-  AutomationActionTriggerTypeVisual,
   TriggerTypeEnum,
 } from '#PrototypeComposer/checklist.types';
 import {
@@ -15,6 +15,7 @@ import {
 } from '#types';
 import { labelByConstraint } from '#utils';
 import { DEFAULT_VALUE } from '#views/Jobs/PrintJob/constant';
+import { camelCase, startCase } from 'lodash';
 import { InputTypes } from './globalTypes';
 import { generateShouldBeCriteria } from './stringUtils';
 import { formatDateTime } from './timeUtils';
@@ -88,24 +89,63 @@ export const ObjectIdsDataFromChoices = (choices: any) => {
 
 export const getAutomationActionTexts = (
   automation: AutomationAction,
-  forNotify?: 'success' | 'error' | null,
-  objectTypeDisplayName?: string,
+  forNotify: 'success' | 'error' | null,
+  parameterRefData: any,
+  isExecuted?: string,
+  parameter?: any,
 ) => {
+  const objectTypeDisplayName =
+    automation?.actionDetails?.objectTypeDisplayName ||
+    parameterRefData?.data?.objectTypeDisplayName;
+  const automationActionType = AutomationActionActionTypeVisual[automation.actionType];
+  const automationPropertyName = automation?.actionDetails?.propertyDisplayName || '';
+  const targetEntityTypeDisplayName = startCase(
+    camelCase(automation?.targetEntityType?.split('_').join(' ')),
+  );
+  const parameterRefLabel = parameterRefData?.label || '';
+  const parameterLabel = parameter?.label || '';
+
   if (forNotify === 'success') {
-    return `Triggered "${AutomationActionActionTypeVisual[automation.actionType]} ${
-      automation.actionDetails.propertyDisplayName || ''
-    } of the selected ${automation.actionDetails.objectTypeDisplayName || objectTypeDisplayName}"`;
+    return `Triggered "${automationActionType} ${automationPropertyName} of the selected ${objectTypeDisplayName}"`;
   } else if (forNotify === 'error') {
-    return `Not able to trigger "${AutomationActionActionTypeVisual[automation.actionType]} ${
-      automation.actionDetails.propertyDisplayName || ''
-    } of the selected ${automation.actionDetails.objectTypeDisplayName || objectTypeDisplayName}"`;
+    return `Not able to trigger "${automationActionType} ${automationPropertyName} of the selected ${objectTypeDisplayName}"`;
   }
 
-  return `${AutomationActionActionTypeVisual[automation.actionType]} ${
-    automation.actionDetails.propertyDisplayName || ''
-  } of the selected ${
-    automation.actionDetails.objectTypeDisplayName || objectTypeDisplayName
-  } when the ${AutomationActionTriggerTypeVisual[automation.triggerType]}.`;
+  if (isExecuted) {
+    switch (automation.actionType) {
+      case AutomationActionActionType.CREATE_OBJECT:
+        return `Create Object : A new ${objectTypeDisplayName} was added with ID: ${automation?.actionDetails?.objectTypeExternalId}`;
+      case AutomationActionActionType.INCREASE_PROPERTY:
+        return `Increase ${targetEntityTypeDisplayName} : Increase ${objectTypeDisplayName} of ${parameterRefLabel} was increased by the value in the ${parameterLabel} parameter`;
+      case AutomationActionActionType.DECREASE_PROPERTY:
+        return `Decrease ${targetEntityTypeDisplayName} : Decrease ${objectTypeDisplayName} of ${parameterRefLabel} was decreased by the value in the ${parameterLabel} parameter`;
+      case AutomationActionActionType.ARCHIVE_OBJECT:
+        return `Archive a ${targetEntityTypeDisplayName} : A new ${objectTypeDisplayName} with ID: ${automation?.actionDetails?.objectTypeExternalId} was archived.`;
+      case AutomationActionActionType.SET_PROPERTY:
+        return `Update ${startCase(
+          camelCase(automation.actionDetails?.captureProperty?.split('_').join(' ')),
+        )} : Set ${objectTypeDisplayName} of ${parameterRefLabel} to ${automationPropertyName}`;
+      case AutomationActionActionType.SET_RELATION:
+        return `Set ${targetEntityTypeDisplayName} : ${automation?.actionDetails?.relationDisplayName} of ${parameterRefLabel} was set as the resource selected in the ${parameterLabel}`;
+    }
+  } else {
+    switch (automation.actionType) {
+      case AutomationActionActionType.CREATE_OBJECT:
+        return `Create Object : Create/Add a new ${objectTypeDisplayName}`;
+      case AutomationActionActionType.INCREASE_PROPERTY:
+        return `Increase ${targetEntityTypeDisplayName} : Increase ${objectTypeDisplayName} of ${parameterRefLabel} by the value in the ${parameterLabel} parameter`;
+      case AutomationActionActionType.DECREASE_PROPERTY:
+        return `Decrease ${targetEntityTypeDisplayName} : Decrease ${objectTypeDisplayName} of ${parameterRefLabel} by the value in the ${parameterLabel} parameter`;
+      case AutomationActionActionType.ARCHIVE_OBJECT:
+        return `Archive a ${targetEntityTypeDisplayName} : Archive an existing ${objectTypeDisplayName}`;
+      case AutomationActionActionType.SET_PROPERTY:
+        return `Update ${startCase(
+          camelCase(automation.actionDetails?.captureProperty?.split('_').join(' ')),
+        )} : ${objectTypeDisplayName} of ${parameterRefLabel} was set to ${automationPropertyName}`;
+      case AutomationActionActionType.SET_RELATION:
+        return `Set ${targetEntityTypeDisplayName} : Set relation ${automation?.actionDetails?.relationDisplayName} of ${parameterRefLabel} as the resource selected in the ${parameterLabel}`;
+    }
+  }
 };
 
 export const getParameters = ({

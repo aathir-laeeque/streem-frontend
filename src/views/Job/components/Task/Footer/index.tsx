@@ -202,6 +202,19 @@ const Footer: FC<FooterProps> = ({ task }) => {
     }
   };
 
+  const openAutomationModal = () => {
+    dispatch(
+      openOverlayAction({
+        type: OverlayNames.AUTOMATION_TASK_MODAL,
+        props: {
+          taskId: task.id,
+          taskExecutionId: task?.taskExecution?.id,
+          initialTab: '1',
+        },
+      }),
+    );
+  };
+
   const preCompleteTask = (params?: {
     reason?: string;
     continueRecurrence?: boolean;
@@ -226,6 +239,7 @@ const Footer: FC<FooterProps> = ({ task }) => {
           continueRecurrence,
           recurringOverdueCompletionReason,
           scheduleOverdueCompletionReason,
+          openAutomationModal,
         }),
       );
     };
@@ -341,6 +355,7 @@ const Footer: FC<FooterProps> = ({ task }) => {
         jobActions.performTaskAction({
           id: taskExecutionId,
           action: TaskAction.START,
+          openAutomationModal,
           ...(createObjectAutomation.length > 0 && {
             createObjectAutomations: createObjectAutomation,
           }),
@@ -604,6 +619,7 @@ const Footer: FC<FooterProps> = ({ task }) => {
                   jobActions.performTaskAction({
                     id: taskExecutionId,
                     action: TaskAction.COMPLETE_ERROR_CORRECTION,
+                    openAutomationModal,
                   }),
                 );
               }}

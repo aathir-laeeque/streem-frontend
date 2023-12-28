@@ -4,6 +4,7 @@ import {
   AutomationActionTriggerType,
   TimerOperator,
 } from '#PrototypeComposer/checklist.types';
+import React from 'react';
 import { showNotification } from '#components/Notification/actions';
 import { NotificationType } from '#components/Notification/types';
 import { closeOverlayAction, openOverlayAction } from '#components/OverlayContainer/actions';
@@ -273,7 +274,9 @@ function* performTaskActionSaga({ payload }: ReturnType<typeof jobActions.perfor
       recurringOverdueCompletionReason,
       recurringPrematureStartReason,
       scheduleOverdueCompletionReason,
+      openAutomationModal,
     } = payload;
+
     const {
       id: jobId,
       parameters,
@@ -353,13 +356,11 @@ function* performTaskActionSaga({ payload }: ReturnType<typeof jobActions.perfor
       if (isAutomamationTriggered && filteredAutomations?.length) {
         for (const automation of filteredAutomations) {
           if (automationInputValidator(automation, parameters)) {
-            const objectTypeDisplayName = parameters.get(
-              automation.actionDetails.referencedParameterId,
-            )?.data?.objectTypeDisplayName;
+            const parameterRefData = parameters.get(automation.actionDetails.referencedParameterId);
             yield put(
               showNotification({
                 type: NotificationType.ERROR,
-                msg: getAutomationActionTexts(automation, 'error', objectTypeDisplayName),
+                msg: getAutomationActionTexts(automation, 'error', parameterRefData),
               }),
             );
           }
@@ -388,29 +389,6 @@ function* performTaskActionSaga({ payload }: ReturnType<typeof jobActions.perfor
       );
       throw getErrorMsg(errors);
     }
-    if (isAutomamationTriggered && filteredAutomations?.length) {
-      if (filteredAutomations.length > 1) {
-        yield put(
-          showNotification({
-            type: NotificationType.SUCCESS,
-            msg: `${filteredAutomations.length} Automations are completed successfully`,
-          }),
-        );
-      } else {
-        const automation = filteredAutomations[0];
-        if (automationInputValidator(automation, parameters)) {
-          const objectTypeDisplayName = parameters.get(
-            automation.actionDetails.referencedParameterId,
-          )?.data?.objectTypeDisplayName;
-          yield put(
-            showNotification({
-              type: NotificationType.SUCCESS,
-              msg: getAutomationActionTexts(automation, 'success', objectTypeDisplayName),
-            }),
-          );
-        }
-      }
-    }
 
     yield put(setRecentServerTimestamp(timestamp));
     yield put(
@@ -419,6 +397,40 @@ function* performTaskActionSaga({ payload }: ReturnType<typeof jobActions.perfor
         data,
       }),
     );
+
+    if (isAutomamationTriggered && filteredAutomations?.length) {
+      if (filteredAutomations.length > 1) {
+        yield put(
+          showNotification({
+            type: NotificationType.SUCCESS,
+            msg: (
+              <div>
+                {`${filteredAutomations.length} Automations are completed successfully!`}
+                {openAutomationModal && (
+                  <div
+                    style={{ textDecoration: 'none', color: 'blue', margin: '4px 0' }}
+                    onClick={() => openAutomationModal()}
+                  >
+                    View All
+                  </div>
+                )}{' '}
+              </div>
+            ),
+          }),
+        );
+      } else {
+        const automation = filteredAutomations[0];
+        if (automationInputValidator(automation, parameters)) {
+          const parameterRefData = parameters.get(automation.actionDetails.referencedParameterId);
+          yield put(
+            showNotification({
+              type: NotificationType.SUCCESS,
+              msg: getAutomationActionTexts(automation, 'success', parameterRefData),
+            }),
+          );
+        }
+      }
+    }
 
     if (data?.scheduledTaskExecutionIds?.length) {
       const message = getScheduleTasksMessage(

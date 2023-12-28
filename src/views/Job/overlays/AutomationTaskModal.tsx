@@ -5,19 +5,15 @@ import styled from 'styled-components';
 import { Task } from '#PrototypeComposer/checklist.types';
 import AutomationInfo from '../components/Task/AutomationInfo';
 import { LocationProvider } from '@reach/router';
+import { useTypedSelector } from '#store';
 
 const Wrapper = styled.div`
-  #modal-container .modal-background .modal {
-    min-width: 450px;
-  }
-
   .modal {
-    width: 50%;
+    width: 70%;
 
     .close-icon {
       color: #e0e0e0 !important;
       font-size: 16px !important;
-      top: 19px !important;
     }
 
     .modal-header {
@@ -28,26 +24,26 @@ const Wrapper = styled.div`
         font-size: 14px !important;
       }
     }
-    .modal-body {
-      padding: 0px !important;
-
-      .automation-modal-form-body {
-        padding: 16px 16px 16px 26px;
-      }
-    }
   }
 `;
 
 type Props = {
-  task: Task;
+  taskId: any;
+  initialTab?: number;
+  taskExecutionId?: any;
 };
 
 const AutomationTaskModal = (props: CommonOverlayProps<Props>) => {
   const {
     closeOverlay,
     closeAllOverlays,
-    props: { task },
+    props: { taskId, initialTab, taskExecutionId },
   } = props;
+
+  const { tasks, taskExecutions } = useTypedSelector((state) => state.job);
+
+  const taskData = tasks.get(taskId);
+  const taskExecutionData = taskExecutions.get(taskExecutionId);
 
   return (
     <Wrapper>
@@ -65,15 +61,27 @@ const AutomationTaskModal = (props: CommonOverlayProps<Props>) => {
                 {
                   value: '0',
                   label: 'Automations configured',
-                  panelContent: <AutomationInfo task={task} executedSection={false} />,
+                  panelContent: (
+                    <AutomationInfo
+                      task={{ ...taskData, taskExecution: taskExecutionData }}
+                      executedSection={false}
+                      closeOverlay={closeOverlay}
+                    />
+                  ),
                 },
                 {
                   value: '1',
                   label: 'Executed Automations',
-                  panelContent: <AutomationInfo task={task} executedSection={true} />,
+                  panelContent: (
+                    <AutomationInfo
+                      task={{ ...taskData, taskExecution: taskExecutionData }}
+                      executedSection={true}
+                      closeOverlay={closeOverlay}
+                    />
+                  ),
                 },
               ]}
-              activeTab="0"
+              activeTab={initialTab || '0'}
             />
           </LocationProvider>
         </div>
