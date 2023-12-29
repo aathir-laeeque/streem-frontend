@@ -12,11 +12,11 @@ import PDFMerger from 'pdf-merger-js';
 import React from 'react';
 import { ObjectChangeLogsPdf } from '../../Ontology/PrintObjectChangeLogs/PrintObjectChangeLogs';
 import { SessionActivityPdf } from '../../UserAccess/PrintSessionActivity/PrintSessionActivityPdf';
+import { InitialPage } from '../PrintJob/InitialPage';
 import { JobPdf } from '../PrintJob/JobPdf';
 import { PrintContext } from '../PrintJob/PrintContext';
 import { JobAuditLogsPdf } from '../PrintJobAuditLogs/JobAuditLogsPdf';
 import { CustomViewJobAuditLogsPdf } from '../PrintJobLogs/PrintJobLogs';
-import { InitialPage } from '../PrintJob/InitialPage';
 
 Font.register({
   family: 'Nunito',
@@ -57,6 +57,7 @@ const generateSingle = async (data: any) => {
 
       //  https://github.com/diegomura/react-pdf/issues/310 :: await first PDF promise to be resolved, then u can execute next calls in parallel in any number desired,
       data.data.checklist.stages = [duplicatedStages[0]];
+
       progress(++count, duplicatedStages.length, 'Preparing Job Details');
       const a = pdf(<InitialPage {...data} />);
       const initialPage = await a.toBlob();

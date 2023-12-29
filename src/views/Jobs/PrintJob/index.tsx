@@ -1,22 +1,16 @@
-import { ProgressBar } from '#components';
+import { createFetchList } from '#hooks/useFetchData';
 import { useTypedSelector } from '#store';
+import { COMPLETED_JOB_STATES, MandatoryParameter } from '#types';
 import { setKeepPersistedData } from '#utils';
 import { apiGetObjectTypes, apiPrintJobDetails } from '#utils/apiUrls';
-import {
-  generateVariationData,
-  getParameters,
-  getVariationData,
-  getTransformedTasks,
-} from '#utils/parameterUtils';
+import { FilterOperators } from '#utils/globalTypes';
+import { generateVariationData, getParameters, getTransformedTasks } from '#utils/parameterUtils';
 import { request } from '#utils/request';
+import { objectTypesUrlParams } from '#views/Job/overlays/ParameterVariationContent';
 import React, { FC, useEffect, useRef, useState } from 'react';
 import { PdfJobDataType } from '../Components/Documents/CommonJobPDFDetails';
 import { PdfWorkerContainer } from '../PdfWorker/LoadPdfWorker';
 import { PrintJobProps } from './types';
-import { COMPLETED_JOB_STATES, MandatoryParameter } from '#types';
-import { createFetchList } from '#hooks/useFetchData';
-import { objectTypesUrlParams } from '#views/Job/overlays/ParameterVariationContent';
-import { FilterOperators } from '#utils/globalTypes';
 
 const Download: FC<PrintJobProps> = ({ jobId }) => {
   const { profile, settings, selectedFacility } = useTypedSelector((state) => state.auth);

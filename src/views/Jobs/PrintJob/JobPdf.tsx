@@ -1,14 +1,7 @@
 import logo from '#assets/images/logo.png';
-import {
-  PdfFooter,
-  PdfHeader,
-  PdfText,
-  commonPdfStyles,
-  pdfHeaderStyles,
-} from '#components/documents';
+import { PdfFooter, PdfText, commonPdfStyles, pdfHeaderStyles } from '#components/documents';
 import { Document, Image, Page, StyleSheet, View } from '@react-pdf/renderer';
 import React, { FC } from 'react';
-import { CommonJobPdfDetails } from '../Components/Documents/CommonJobPDFDetails';
 import { PrintContext } from './PrintContext';
 import TaskView from './Task';
 import { Task } from '../../../types/task';
@@ -30,7 +23,6 @@ const styles = StyleSheet.create({
 
 export const JobPdf: FC<any> = ({
   profile,
-  settings,
   selectedFacility,
   dateAndTimeStampFormat,
   timeFormat,
@@ -75,7 +67,7 @@ export const JobPdf: FC<any> = ({
           {checklist?.stages.map((stage: any) => {
             if (hiddenIds[stage.id] === undefined) {
               return (
-                <View key={`${stage.id}`} break={renderInitialPage}>
+                <View key={`${stage.id}`}>
                   <View style={styles.stageHeader}>
                     <View style={commonPdfStyles.flexGrid}>
                       <PdfText style={styles.stageHeaderInfo}>Stage {stage.orderTree}</PdfText>
