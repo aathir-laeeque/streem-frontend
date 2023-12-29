@@ -11,11 +11,11 @@ import { NotificationType } from '#components/Notification/types';
 import { openOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
 import { useTypedSelector } from '#store/helpers';
-import { apiGetParameters, apiMapParameterToTask } from '#utils/apiUrls';
+import { apiGetParameters, apiMapParameterToTask, apiTaskInterLocks } from '#utils/apiUrls';
 import { isFeatureAllowed } from '#services/uiPermissions';
 import { DEFAULT_PAGE_SIZE } from '#utils/constants';
 import { FilterOperators, ResponseObj } from '#utils/globalTypes';
-import { request } from '#utils/request';
+import { getErrorMsg, request } from '#utils/request';
 import { formatDuration } from '#utils/timeUtils';
 import {
   DndContext,
@@ -41,7 +41,7 @@ import {
   Timer,
 } from '@material-ui/icons';
 import { debounce } from 'lodash';
-import React, { FC, useState } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { addNewParameterSuccess, toggleNewParameter } from '../Activity/actions';
 import DynamicTaskDrawer from './DynamicTaskDrawer';
@@ -60,7 +60,8 @@ import taskRecurrenceIcon from '#assets/svg/task-recurrence-icon.svg';
 import taskRecurrenceActive from '#assets/svg/task-recurrence-blue.svg';
 import scheduleTaskIcon from '#assets/svg/schedule-icon-black.svg';
 import scheduleTaskIconActive from '#assets/svg/schedule-icon-blue.svg';
-import taskConditionsIcon from '#assets/svg/TaskInterlocks.svg';
+import taskConditionsIcon from '#assets/svg/interlocks-icon.svg';
+import taskConditionsActiveIcon from '#assets/svg/interlocks-icon-active.svg';
 
 const AddActivity = () => {
   return (
@@ -85,6 +86,8 @@ const TaskCard: FC<
     errors: checklistErrors,
   } = useTypedSelector((state) => state.prototypeComposer);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [taskConditions, setTaskConditions] = useState<number>(0);
+  const [iconHovered, setIconHovered] = useState(false);
   const stageIndex = listOrder.indexOf(activeStageId as string);
 
   const sensors = useSensors(useSensor(PointerSensor));
@@ -207,6 +210,24 @@ const TaskCard: FC<
   const archiveParameterError = checklistErrors.find(
     (error) => error.code === 'E225' && error.id === task.id,
   );
+
+  // TODO: refactor this to use data from task directly. Temporary fix until we get the data from backend in task response itself.
+  const getAllConditionsByTask = async () => {
+    try {
+      const { data, errors } = await request('GET', apiTaskInterLocks(taskId));
+      if (data) {
+        setTaskConditions(data?.validations?.resourceParameterValidations?.length || 0);
+      } else {
+        throw getErrorMsg(errors);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  useEffect(() => {
+    getAllConditionsByTask();
+  }, []);
 
   if (activeStageId) {
     const taskParameters = parameterOrderInTaskInStage[activeStageId][taskId];
@@ -477,9 +498,20 @@ const TaskCard: FC<
                   );
                 }}
               >
-                <div>
-                  <img src={taskConditionsIcon} alt="icon" width="24px" className="icon" />
-                  Configure Conditions
+                <div
+                  onMouseEnter={() => setIconHovered(true)}
+                  onMouseLeave={() => setIconHovered(false)}
+                >
+                  <img
+                    src={
+                      taskConditions > 0 || iconHovered
+                        ? taskConditionsActiveIcon
+                        : taskConditionsIcon
+                    }
+                    alt="icon"
+                    className="icon"
+                  />
+                  Configure Conditions {taskConditions > 0 ? `(${taskConditions})` : null}
                 </div>
               </div>
             </div>
