@@ -17,7 +17,7 @@ import { AddCircleOutline, Close } from '@material-ui/icons';
 import React, { FC, useCallback, useEffect, useRef, useState } from 'react';
 import { Controller, useFieldArray, useForm, useWatch } from 'react-hook-form';
 import { useDispatch } from 'react-redux';
-import { components, OptionProps } from 'react-select';
+import { components, InputActionMeta, OptionProps } from 'react-select';
 import styled from 'styled-components';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -235,6 +235,7 @@ const RuleCard: FC<any> = ({
   control,
 }) => {
   const thenValue = useWatch<{ value: string }>({ name: `rules.${index}.thenValue`, control });
+  const [menuIsOpen, setMenuIsOpen] = useState<any>();
   const [state, setState] = useState<{
     isLoading: Boolean;
     options: any[];
@@ -314,6 +315,15 @@ const RuleCard: FC<any> = ({
         options: parameter.data.map((i: any) => ({ label: i.name, value: i.id })),
       }));
     }
+  };
+
+  const onInputChange = (inputValue: string, { action, prevInputValue }: InputActionMeta) => {
+    if (action === 'input-change') return inputValue;
+    if (action === 'menu-close') {
+      if (prevInputValue) setMenuIsOpen(true);
+      else setMenuIsOpen(undefined);
+    }
+    return prevInputValue;
   };
 
   return (
@@ -506,6 +516,8 @@ const RuleCard: FC<any> = ({
                         isDisabled: isReadOnly,
                         placeholder: 'Select Parameters',
                         closeMenuOnSelect: false,
+                        menuIsOpen: menuIsOpen,
+                        onInputChange: onInputChange,
                         components: { Option },
                         menuPlacement: 'bottom',
                         onChange: (value: any[]) => {
@@ -556,6 +568,8 @@ const RuleCard: FC<any> = ({
                         isDisabled: isReadOnly,
                         placeholder: 'Select Parameters',
                         closeMenuOnSelect: false,
+                        menuIsOpen: menuIsOpen,
+                        onInputChange: onInputChange,
                         components: { Option },
                         menuPlacement: 'bottom',
                         onChange: (value: any[]) => {
