@@ -175,10 +175,10 @@ const ParameterList: FC<ParameterListProps> = ({
   parametersErrors,
 }) => {
   const { isInboxView, parameters, parameterResponseById } = useTypedSelector((state) => state.job);
-
+  const { isBlocked } = useJobStateToFlags();
   return (
     <Wrapper
-      isReadOnly={!isTaskStarted || isTaskPaused}
+      isReadOnly={!isTaskStarted || isTaskPaused || isBlocked}
       isTaskCompleted={isTaskCompleted}
       isCorrectingError={isCorrectingError}
       isInboxView={isInboxView}
