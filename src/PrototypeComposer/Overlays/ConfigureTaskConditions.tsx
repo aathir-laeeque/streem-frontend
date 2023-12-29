@@ -1,3 +1,4 @@
+import { getDateUnits } from '#PrototypeComposer/Parameters/ValidationViews/Resource';
 import {
   AutomationActionTriggerType,
   MandatoryParameter,
@@ -738,13 +739,17 @@ const ConditionFormCard: FC<Props> = ({ isReadOnly, state, setState, activeTaskI
                   },
 
                   {
-                    type: conditionDetails?.propertyInputType
-                      ? conditionDetails.propertyInputType
-                      : InputTypes.SINGLE_LINE,
+                    type: !conditionDetails?.propertyInputType
+                      ? InputTypes.SINGLE_LINE
+                      : [InputTypes.DATE, InputTypes.DATE_TIME].includes(
+                          conditionDetails?.propertyInputType,
+                        )
+                      ? InputTypes.NUMBER
+                      : conditionDetails?.propertyInputType,
                     props: {
                       id: 'value',
                       label: 'Value',
-                      isDisabled: isReadOnly,
+                      disabled: isReadOnly,
                       ...(conditionDetails.propertyInputType === InputTypes.SINGLE_SELECT && {
                         options: selectedObjectType?.properties
                           .find(
@@ -784,12 +789,50 @@ const ConditionFormCard: FC<Props> = ({ isReadOnly, state, setState, activeTaskI
                       },
                     },
                   },
+                  ...([InputTypes.DATE, InputTypes.TIME, InputTypes.DATE_TIME].includes(
+                    conditionDetails.propertyInputType,
+                  )
+                    ? [
+                        {
+                          type: InputTypes.SINGLE_SELECT,
+                          props: {
+                            id: 'objectPropertyUnit',
+                            label: 'Unit',
+                            options: Object.entries(
+                              getDateUnits(conditionDetails.propertyInputType),
+                            ).map(([value, label]) => ({
+                              label,
+                              value,
+                            })),
+                            isDisabled: isReadOnly,
+                            isSearchable: false,
+                            placeholder: 'Select Unit',
+                            defaultValue: conditionDetails?.dateUnit
+                              ? [
+                                  {
+                                    label: getDateUnits(conditionDetails.propertyInputType)[
+                                      conditionDetails.dateUnit as keyof typeof getDateUnits
+                                    ],
+                                    value: conditionDetails.dateUnit,
+                                  },
+                                ]
+                              : undefined,
+                            onChange: (_option: any) => {
+                              onChange({
+                                ...conditionDetails,
+                                dateUnit: _option.value,
+                              });
+                            },
+                          },
+                        },
+                      ]
+                    : []),
                   {
                     type: InputTypes.SINGLE_LINE,
                     props: {
                       id: 'errorMessage',
                       label: 'Error Message',
-                      isDisabled: isReadOnly,
+                      disabled: isReadOnly,
                       placeholder: 'Enter Message',
                       value: conditionDetails?.errorMessage || null,
                       onChange: (_option: Record<string, string>) => {
