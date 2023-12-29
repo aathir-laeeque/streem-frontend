@@ -1,9 +1,9 @@
 import { createContext } from 'react';
 
 const INITIAL_VALUE = {
-  timeFormat: 'HH:mm',
+  timeFormat: 'HH:mm:ss',
   dateFormat: 'MMM dd, yyyy',
-  dateAndTimeStampFormat: `MMM dd, yyyy HH:mm`,
+  dateAndTimeStampFormat: `MMM dd, yyyy HH:mm:ss`,
   selectedFacility: {},
   profile: {},
 };
