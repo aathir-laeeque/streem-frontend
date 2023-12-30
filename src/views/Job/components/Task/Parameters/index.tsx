@@ -17,15 +17,13 @@ export type ParameterListProps = {
 
 const Wrapper = styled.div.attrs({
   className: 'parameter-list',
-})<
-  {
-    isInboxView: boolean;
-    isReadOnly?: boolean;
-  } & Omit<
-    ParameterListProps,
-    'parameterIds' | 'isUserAssignedToTask' | 'parametersErrors' | 'taskExecution'
-  >
->`
+})<{
+  isInboxView: boolean;
+  isReadOnly?: boolean;
+  isTaskCompleted?: boolean;
+  isCorrectingError: boolean;
+  isJobBlocked?: boolean;
+}>`
   display: flex;
   flex-direction: column;
 
@@ -51,8 +49,8 @@ const Wrapper = styled.div.attrs({
     .input-parameter,
     .calculation-parameter,
     .signature-interaction {
-      ${({ isTaskCompleted, isCorrectingError, isInboxView }) =>
-        (isTaskCompleted && !isCorrectingError) || !isInboxView
+      ${({ isTaskCompleted, isCorrectingError, isInboxView, isJobBlocked }) =>
+        (isTaskCompleted && !isCorrectingError) || !isInboxView || isJobBlocked
           ? css`
               pointer-events: none;
             `
@@ -178,7 +176,8 @@ const ParameterList: FC<ParameterListProps> = ({
   const { isBlocked } = useJobStateToFlags();
   return (
     <Wrapper
-      isReadOnly={!isTaskStarted || isTaskPaused || isBlocked}
+      isReadOnly={!isTaskStarted || isTaskPaused}
+      isJobBlocked={isBlocked}
       isTaskCompleted={isTaskCompleted}
       isCorrectingError={isCorrectingError}
       isInboxView={isInboxView}
