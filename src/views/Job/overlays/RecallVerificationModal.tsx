@@ -86,7 +86,7 @@ const RecallVerificationModal = (props: CommonOverlayProps<Props>) => {
           <div className="description">{modalDesc ? modalDesc : 'Write a Description '}</div>
         </div>
         <div className="verification-modal-footer-buttons">
-          <Button variant="secondary" color="blue" onClick={closeOverlay}>
+          <Button variant="secondary" onClick={closeOverlay}>
             Cancel
           </Button>
           <Button onClick={onSubmitModal}>

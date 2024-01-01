@@ -2,7 +2,7 @@ import React, { ComponentPropsWithRef, forwardRef } from 'react';
 import styled, { css } from 'styled-components';
 
 export type ButtonVariant = 'primary' | 'secondary' | 'textOnly';
-export type ButtonColor = 'blue' | 'green' | 'red' | 'dark';
+export type ButtonColor = 'blue' | 'green' | 'red' | 'dark' | 'gray';
 
 type ButtonProps = {
   color?: ButtonColor;
@@ -39,6 +39,13 @@ const ColorMap = {
     hoverBackgroundColor: '#666666',
     textColor: '#ffffff',
   },
+  gray: {
+    activeBackgroundColor: '#cccccc',
+    backgroundColor: '#f4f4f4',
+    borderColor: '#F4F4F4',
+    hoverBackgroundColor: '#e0e0e0',
+    textColor: '#525252',
+  },
 };
 
 const ButtonWrapper = styled.button.attrs(({ type = 'button', disabled = false }) => ({
@@ -65,7 +72,7 @@ const ButtonWrapper = styled.button.attrs(({ type = 'button', disabled = false }
     cursor: not-allowed;
   }
 
-  ${({ variant = 'primary', color = 'blue' }) => {
+  ${({ variant = 'primary', color = variant === 'primary' ? 'blue' : 'gray' }) => {
     const colors = ColorMap[color];
 
     switch (variant) {
@@ -89,7 +96,7 @@ const ButtonWrapper = styled.button.attrs(({ type = 'button', disabled = false }
 
       case 'secondary':
         return css`
-          background-color: #ffffff;
+          background-color: ${color === 'gray' ? `${colors.backgroundColor}` : '#ffffff'};
           border-color: ${colors.borderColor};
           color: ${colors.textColor};
 
@@ -99,7 +106,7 @@ const ButtonWrapper = styled.button.attrs(({ type = 'button', disabled = false }
 
           :hover {
             background-color: ${colors.hoverBackgroundColor};
-            color: #ffffff;
+            color: ${color === 'gray' ? `${colors.textColor}` : '#ffffff'};
 
             > .icon {
               color: inherit;
@@ -117,9 +124,12 @@ const ButtonWrapper = styled.button.attrs(({ type = 'button', disabled = false }
           color: ${colors.textColor};
           padding: 4px 8px;
 
-          :hover,
+          :hover {
+            background-color: ${color === 'gray' ? `${colors.hoverBackgroundColor}` : '#e0e0e0'};
+          }
+
           :active {
-            background-color: #fafafa;
+            background-color: ${color === 'gray' ? `${colors.activeBackgroundColor}` : '#fafafa'};
           }
         `;
       default:
@@ -127,16 +137,16 @@ const ButtonWrapper = styled.button.attrs(({ type = 'button', disabled = false }
     }
   }}
 
-  ${({ disabled, variant = 'primary', loading, color = 'blue' }) =>
+  ${({ disabled, variant = 'primary', loading, color = variant === 'primary' ? 'blue' : 'gray' }) =>
     disabled
       ? variant === 'secondary'
         ? css`
             border-color: #bbbbbb;
             color: #bbbbbb;
-            background-color: #fff;
+            background-color: #e8e8e8;
 
             :hover {
-              background-color: #fff;
+              background-color: #e8e8e8;
               color: #bbbbbb;
             }
           `
