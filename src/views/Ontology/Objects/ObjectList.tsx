@@ -164,6 +164,25 @@ const ObjectList: FC<TabContentProps> = () => {
       id: relation.id,
       label: relation.displayName,
       minWidth: 100,
+      format: function renderComp(item) {
+        return (
+          <>
+            {(item[relation.id] || []).map((value, index) => (
+              <div>
+                <div
+                  style={{ cursor: 'pointer' }}
+                  onClick={() =>
+                    navigate(`/ontology/object-types/${relation.objectTypeId}/objects/${value?.id}`)
+                  }
+                >
+                  {value?.displayName}
+                  {index === item[relation.id].length - 1 ? '' : ', '}
+                </div>
+              </div>
+            ))}
+          </>
+        );
+      },
     })),
     {
       id: 'actions',
@@ -333,7 +352,10 @@ const ObjectList: FC<TabContentProps> = () => {
                 {},
               ),
               ...object?.relations?.reduce<Record<string, string>>((acc, relation) => {
-                acc[relation.id] = relation.targets.map((target) => target.displayName).join(', ');
+                acc[relation.id] = relation.targets.map((target) => ({
+                  id: target.id,
+                  displayName: target.displayName,
+                }));
                 return acc;
               }, {}),
             }))}
