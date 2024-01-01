@@ -168,29 +168,31 @@ const ChecklistHeader: FC<ProcessInitialState> = ({
       case CollaboratorState.COMMENTED_CHANGES:
         return (
           <>
-            {data?.state !== ChecklistStates.SIGNING_IN_PROGRESS && (
-              <Button
-                className="submit"
-                style={{ backgroundColor: '#333333' }}
-                onClick={handleContinueReview}
-              >
-                <Message style={{ fontSize: '16px', marginRight: '8px' }} />
-                Continue Review
-              </Button>
-            )}
-            {data?.state !== ChecklistStates.SIGNING_IN_PROGRESS && !areReviewsPending && (
-              <Button
-                color={allDoneOk ? 'green' : 'blue'}
-                className="submit"
-                onClick={handleSendToAuthor}
-              >
-                <DoneAll style={{ fontSize: '16px', marginRight: '8px' }} />
-                Send to Author
-              </Button>
-            )}
+            {data?.state !== ChecklistStates.SIGNING_IN_PROGRESS &&
+              data?.state !== ChecklistStates.READY_FOR_SIGNING && (
+                <>
+                  <Button
+                    className="submit"
+                    style={{ backgroundColor: '#333333' }}
+                    onClick={handleContinueReview}
+                  >
+                    <Message style={{ fontSize: '16px', marginRight: '8px' }} />
+                    Continue Review
+                  </Button>
+                  {!areReviewsPending && (
+                    <Button
+                      color={allDoneOk ? 'green' : 'blue'}
+                      className="submit"
+                      onClick={handleSendToAuthor}
+                    >
+                      <DoneAll style={{ fontSize: '16px', marginRight: '8px' }} />
+                      Send to Author
+                    </Button>
+                  )}
+                </>
+              )}
           </>
         );
-
       default:
         return null;
     }
