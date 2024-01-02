@@ -16,6 +16,7 @@ import { JobPdf } from '../PrintJob/JobPdf';
 import { PrintContext } from '../PrintJob/PrintContext';
 import { JobAuditLogsPdf } from '../PrintJobAuditLogs/JobAuditLogsPdf';
 import { CustomViewJobAuditLogsPdf } from '../PrintJobLogs/PrintJobLogs';
+import { InitialPage } from '../PrintJob/InitialPage';
 
 Font.register({
   family: 'Nunito',
@@ -37,7 +38,7 @@ Font.registerEmojiSource({
 
 export let progressCb = console.info;
 
-function progress(count: number, total: number, name: string, stageNo: number) {
+function progress(count: number, total: number, name: string, stageNo?: number) {
   progressCb((count / total) * 100, name, stageNo);
 }
 
@@ -56,26 +57,26 @@ const generateSingle = async (data: any) => {
 
       //  https://github.com/diegomura/react-pdf/issues/310 :: await first PDF promise to be resolved, then u can execute next calls in parallel in any number desired,
       data.data.checklist.stages = [duplicatedStages[0]];
-      progress(++count, duplicatedStages.length, duplicatedStages[0].name, 1);
-      const a = pdf(<JobPdf {...data} renderInitialPage />);
-      const firstStage = await a.toBlob();
-
-      duplicatedStages.splice(0, 1);
+      progress(++count, duplicatedStages.length, 'Preparing Job Details');
+      const a = pdf(<InitialPage {...data} />);
+      const initialPage = await a.toBlob();
 
       const merger = new PDFMerger();
 
-      const arr = new Uint8Array(await firstStage.arrayBuffer());
+      const arr = new Uint8Array(await initialPage.arrayBuffer());
       await merger.add(arr);
 
       // SERIAL APPROACH
       for (let i = 0; i < duplicatedStages.length; i++) {
         const stage = duplicatedStages[i];
         data.data.checklist.stages = [stage];
-        const a = pdf(<JobPdf {...data} />);
-        const b = await a.toBlob();
-        const arr = new Uint8Array(await b.arrayBuffer());
-        await merger.add(arr);
-        progress(++count, duplicatedStages.length, stage.name, i + 2);
+        if (!data.hiddenIds[stage?.id]) {
+          const a = pdf(<JobPdf {...data} />);
+          const b = await a.toBlob();
+          const arr = new Uint8Array(await b.arrayBuffer());
+          await merger.add(arr);
+        }
+        progress(++count, duplicatedStages.length, stage.name, i + 1);
       }
 
       const mergedPdfBuffer = await merger.saveAsBuffer();

@@ -68,21 +68,10 @@ export const JobPdf: FC<any> = ({
     >
       <Document title={code}>
         <Page style={commonPdfStyles.page}>
-          {renderInitialPage ? (
-            <PdfHeader logoUrl={settings?.logoUrl} />
-          ) : (
-            <View style={pdfHeaderStyles.header} fixed>
-              <Image src={logo} style={{ height: '24px' }} />
-              <PdfText style={{ fontWeight: 700 }}>Job ID : {code}</PdfText>
-            </View>
-          )}
-          {renderInitialPage && (
-            <CommonJobPdfDetails
-              jobPdfData={data}
-              dateAndTimeStampFormat={dateAndTimeStampFormat}
-              dateFormat={dateFormat}
-            />
-          )}
+          <View style={pdfHeaderStyles.header} fixed>
+            <Image src={logo} style={{ height: '24px' }} />
+            <PdfText style={{ fontWeight: 700 }}>Job ID : {code}</PdfText>
+          </View>
           {checklist?.stages.map((stage: any) => {
             if (hiddenIds[stage.id] === undefined) {
               return (

@@ -112,7 +112,7 @@ const Download: FC<PrintJobProps> = ({ jobId }) => {
     }
   }, [objectTypesList]);
 
-  const progressCallback = (val: any, name: string, stageNum: number) => {
+  const progressCallback = (val: any, name: string, stageNum?: number) => {
     setProgressName(name);
     setProgress(val);
     setStageNo(stageNum);
