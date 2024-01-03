@@ -181,6 +181,30 @@ function updateTaskExecution(draft: JobStore, payload: typeof actions.updateTask
 
   if (taskExecution) {
     draft.taskExecutions.set(payload.id, { ...taskExecution, ...payload.data });
+
+    draft.jobFromBE?.checklist.stages = draft.jobFromBE.checklist.stages.map((stage: any) => {
+      if (stage.id === taskExecution?.stageId) {
+        return {
+          ...stage,
+          tasks: stage.tasks.map((currTask: any) => {
+            if (currTask.id === taskExecution?.taskId) {
+              return {
+                ...currTask,
+                taskExecutions: currTask.taskExecutions.map((currTaskExecution) => {
+                  if (currTaskExecution.id === taskExecution.id) {
+                    return { ...payload.data };
+                  } else {
+                    return currTaskExecution;
+                  }
+                }),
+              };
+            }
+            return currTask;
+          }),
+        };
+      }
+      return stage;
+    });
   }
 
   if (payload.data.state in COMPLETED_TASK_STATES) {
