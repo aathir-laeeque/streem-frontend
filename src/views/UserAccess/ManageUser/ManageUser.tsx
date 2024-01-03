@@ -359,7 +359,7 @@ const ManageUser: FC<EditUserProps> = ({
             Save Changes
           </Button>
         )}
-        <Button className="cancel-button" variant="textOnly" onClick={() => navigate(-1)}>
+        <Button className="cancel-button" variant="textOnly" onClick={() => navigate('/users')}>
           Go Back
         </Button>
       </div>

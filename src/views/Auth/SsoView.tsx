@@ -71,7 +71,7 @@ export const SsoView = () => {
         break;
     }
     if (![SsoStates.RE_LOGIN, SsoStates.LOGIN].includes(state)) {
-      navigate(location);
+      navigate(location, { replace: true });
     }
   }, [extractedTOkenCode]);
 

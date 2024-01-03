@@ -178,7 +178,7 @@ function* addUserSaga({ payload }: ReturnType<typeof addUser>) {
       throw getErrorMsg(errors);
     }
 
-    navigate(-1);
+    navigate('/users');
     let heading = 'Invitation Sent';
     let subHeading =
       'Invitation with Secret Key to register has been sent to the Employee’s Email ID.';

@@ -753,7 +753,7 @@ function* completeJobSaga({ payload }: ReturnType<typeof jobActions.completeJob>
           }`,
         }),
       );
-      navigate(-1);
+      navigate('/inbox');
     }
   } catch (error) {
     yield* handleCatch('Job', 'completeJobSaga', error, true);

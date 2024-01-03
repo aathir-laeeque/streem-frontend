@@ -485,7 +485,7 @@ const PrototypeForm: FC<Props> = (props) => {
       </div>
 
       <div className="form-submit-buttons">
-        <Button color="red" variant="secondary" onClick={() => navigate(-1)}>
+        <Button color="red" variant="secondary" onClick={() => navigate('/checklists')}>
           Cancel
         </Button>
         {formMode !== FormMode.VIEW && <Button type="submit">Submit</Button>}
