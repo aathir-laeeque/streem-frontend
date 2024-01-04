@@ -56,12 +56,9 @@ import {
 } from './actions';
 import { AddActivityItemWrapper, TaskCardWrapper } from './styles';
 import { TaskCardProps, TaskTypeEnum } from './types';
-import taskRecurrenceIcon from '#assets/svg/task-recurrence-icon.svg';
-import taskRecurrenceActive from '#assets/svg/task-recurrence-blue.svg';
-import scheduleTaskIcon from '#assets/svg/schedule-icon-black.svg';
-import scheduleTaskIconActive from '#assets/svg/schedule-icon-blue.svg';
-import taskConditionsIcon from '#assets/svg/interlocks-icon.svg';
-import taskConditionsActiveIcon from '#assets/svg/interlocks-icon-active.svg';
+import TaskRecurrence from '#assets/svg/TaskRecurrence';
+import ScheduleTask from '#assets/svg/ScheduleTask';
+import TaskInterlocks from '#assets/svg/TaskInterlocks';
 
 const AddActivity = () => {
   return (
@@ -87,7 +84,6 @@ const TaskCard: FC<
   } = useTypedSelector((state) => state.prototypeComposer);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [taskConditions, setTaskConditions] = useState<number>(0);
-  const [iconHovered, setIconHovered] = useState(false);
   const stageIndex = listOrder.indexOf(activeStageId as string);
 
   const sensors = useSensors(useSensor(PointerSensor));
@@ -238,6 +234,9 @@ const TaskCard: FC<
         isTimed={timed}
         hasMedias={hasMedias}
         hasStop={hasStop}
+        enableRecurrence={enableRecurrence}
+        enableScheduling={enableScheduling}
+        taskConditions={taskConditions}
         isActive={isActive}
         onClick={() => {
           if (activeTaskId !== taskId) {
@@ -436,7 +435,7 @@ const TaskCard: FC<
               {isFeatureAllowed('recurringTask') && (
                 <div
                   className="task-config-control-item"
-                  id="add-task-recurrence"
+                  id="task-recurrence"
                   onClick={() => {
                     dispatch(
                       openOverlayAction({
@@ -450,10 +449,7 @@ const TaskCard: FC<
                   }}
                 >
                   <div>
-                    <img
-                      src={enableRecurrence ? taskRecurrenceActive : taskRecurrenceIcon}
-                      style={{ marginRight: '8px' }}
-                    />
+                    <TaskRecurrence className="icon" />
                     Task Recurrence
                   </div>
                 </div>
@@ -475,10 +471,7 @@ const TaskCard: FC<
                   }}
                 >
                   <div>
-                    <img
-                      src={enableScheduling ? scheduleTaskIconActive : scheduleTaskIcon}
-                      style={{ marginRight: '8px' }}
-                    />
+                    <ScheduleTask className="icon" />
                     Schedule Task
                   </div>
                 </div>
@@ -498,19 +491,8 @@ const TaskCard: FC<
                   );
                 }}
               >
-                <div
-                  onMouseEnter={() => setIconHovered(true)}
-                  onMouseLeave={() => setIconHovered(false)}
-                >
-                  <img
-                    src={
-                      taskConditions > 0 || iconHovered
-                        ? taskConditionsActiveIcon
-                        : taskConditionsIcon
-                    }
-                    alt="icon"
-                    className="icon"
-                  />
+                <div>
+                  <TaskInterlocks className="icon" />
                   Configure Conditions {taskConditions > 0 ? `(${taskConditions})` : null}
                 </div>
               </div>

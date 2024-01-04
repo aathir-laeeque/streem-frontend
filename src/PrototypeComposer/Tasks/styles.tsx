@@ -117,6 +117,7 @@ const TaskCardWrapper = styled.div.attrs({
             :hover {
               .icon {
                 color: #1d84ff;
+                fill: #1d84ff;
               }
             }
 
@@ -133,6 +134,7 @@ const TaskCardWrapper = styled.div.attrs({
 
             .icon {
               margin-right: 8px;
+              color: #161616;
 
               @media (max-width: 1200px) {
                 font-size: 14px;
@@ -168,6 +170,42 @@ const TaskCardWrapper = styled.div.attrs({
             if (isTimed) {
               return css`
                 #timed {
+                  .icon {
+                    color: #1d84ff;
+                  }
+                }
+              `;
+            }
+          }}
+
+          ${({ enableRecurrence }) => {
+            if (enableRecurrence) {
+              return css`
+                #task-recurrence {
+                  .icon {
+                    color: #1d84ff;
+                  }
+                }
+              `;
+            }
+          }}
+
+          ${({ enableScheduling }) => {
+            if (enableScheduling) {
+              return css`
+                #schedule-task {
+                  .icon {
+                    color: #1d84ff;
+                  }
+                }
+              `;
+            }
+          }}
+
+          ${({ taskConditions }) => {
+            if (taskConditions > 0) {
+              return css`
+                #add-interlocks {
                   .icon {
                     color: #1d84ff;
                   }

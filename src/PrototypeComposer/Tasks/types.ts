@@ -19,6 +19,9 @@ export type TaskCardWrapperProps = {
   isTimed: boolean;
   isActive: boolean;
   isReadOnly: boolean;
+  enableScheduling: boolean;
+  enableRecurrence: boolean;
+  taskConditions: number;
 };
 
 export type TaskMediasProps = {
