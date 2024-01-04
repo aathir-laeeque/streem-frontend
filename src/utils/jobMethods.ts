@@ -4,7 +4,7 @@ import { ParameterExecutionState } from '../types/parameter';
 export const taskStateColor = (taskStatus: TaskExecutionState | ParameterExecutionState) => {
   switch (taskStatus) {
     case 'NOT_STARTED':
-      return '#F4F4F4';
+      return '#E0E0E0';
     case 'IN_PROGRESS':
       return '#79B6FF';
     case 'COMPLETED':
