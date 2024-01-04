@@ -286,9 +286,7 @@ const TaskNavCard: FC<{ task: any; taskNo: number; errors: string[]; stageNo: nu
                               </span>
                             </Tooltip>
                           ) : null}
-                          {enableScheduling &&
-                          schedulingExpectedStartedAt &&
-                          schedulingExpectedDueAt ? (
+                          {enableScheduling ? (
                             <span>
                               {!isTaskStarted &&
                               enableScheduling &&
