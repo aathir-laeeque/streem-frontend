@@ -128,7 +128,12 @@ const ShouldBeParameter: FC<
         : { desiredValue1: parseFloat(parameterDataRef.current?.value) }),
     }),
     isUserAuthorisedForApproval: profile?.roles?.some((role) =>
-      [roles.SUPERVISOR, roles.FACILITY_ADMIN, roles.CHECKLIST_PUBLISHER].includes(role.name),
+      [
+        roles.SUPERVISOR,
+        roles.FACILITY_ADMIN,
+        roles.CHECKLIST_PUBLISHER,
+        roles.ACCOUNT_OWNER,
+      ].includes(role.name),
     ),
     isValueChanged: false,
     value: parameter?.response?.value ?? null,
