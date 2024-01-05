@@ -11,11 +11,11 @@ import { NotificationType } from '#components/Notification/types';
 import { openOverlayAction } from '#components/OverlayContainer/actions';
 import { OverlayNames } from '#components/OverlayContainer/types';
 import { useTypedSelector } from '#store/helpers';
-import { apiGetParameters, apiMapParameterToTask, apiTaskInterLocks } from '#utils/apiUrls';
+import { apiGetParameters, apiMapParameterToTask } from '#utils/apiUrls';
 import { isFeatureAllowed } from '#services/uiPermissions';
 import { DEFAULT_PAGE_SIZE } from '#utils/constants';
 import { FilterOperators, ResponseObj } from '#utils/globalTypes';
-import { getErrorMsg, request } from '#utils/request';
+import { request } from '#utils/request';
 import { formatDuration } from '#utils/timeUtils';
 import {
   DndContext,
@@ -41,7 +41,7 @@ import {
   Timer,
 } from '@material-ui/icons';
 import { debounce } from 'lodash';
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { addNewParameterSuccess, toggleNewParameter } from '../Activity/actions';
 import DynamicTaskDrawer from './DynamicTaskDrawer';
@@ -83,7 +83,6 @@ const TaskCard: FC<
     errors: checklistErrors,
   } = useTypedSelector((state) => state.prototypeComposer);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  const [taskConditions, setTaskConditions] = useState<number>(0);
   const stageIndex = listOrder.indexOf(activeStageId as string);
 
   const sensors = useSensors(useSensor(PointerSensor));
@@ -100,7 +99,10 @@ const TaskCard: FC<
     automations,
     enableScheduling,
     enableRecurrence,
+    interlocks,
   } = task;
+
+  const taskConditions = interlocks?.validations?.resourceParameterValidations?.length || 0;
 
   const handleDragEnd = (e: DragEndEvent) => {
     const { active, over } = e;
@@ -206,24 +208,6 @@ const TaskCard: FC<
   const archiveParameterError = checklistErrors.find(
     (error) => error.code === 'E225' && error.id === task.id,
   );
-
-  // TODO: refactor this to use data from task directly. Temporary fix until we get the data from backend in task response itself.
-  const getAllConditionsByTask = async () => {
-    try {
-      const { data, errors } = await request('GET', apiTaskInterLocks(taskId));
-      if (data) {
-        setTaskConditions(data?.validations?.resourceParameterValidations?.length || 0);
-      } else {
-        throw getErrorMsg(errors);
-      }
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
-  useEffect(() => {
-    getAllConditionsByTask();
-  }, []);
 
   if (activeStageId) {
     const taskParameters = parameterOrderInTaskInStage[activeStageId][taskId];

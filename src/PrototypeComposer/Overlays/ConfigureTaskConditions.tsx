@@ -1,4 +1,5 @@
 import { getDateUnits } from '#PrototypeComposer/Parameters/ValidationViews/Resource';
+import { updateTask } from '#PrototypeComposer/Tasks/actions';
 import {
   AutomationActionTriggerType,
   MandatoryParameter,
@@ -202,7 +203,7 @@ const ConfigureTaskConditions: FC<CommonOverlayProps<Pick<Props, 'checklistId' |
     });
 
     const {
-      tasks: { activeTaskId },
+      tasks: { activeTaskId, listById },
     } = useTypedSelector((state) => state.prototypeComposer);
 
     const dispatch = useDispatch();
@@ -237,6 +238,12 @@ const ConfigureTaskConditions: FC<CommonOverlayProps<Pick<Props, 'checklistId' |
             ...prev,
             taskConditionsList: data?.validations?.resourceParameterValidations || [],
           }));
+          dispatch(
+            updateTask({
+              ...listById[activeTaskId!],
+              interlocks: data,
+            }),
+          );
         } else {
           throw getErrorMsg(errors);
         }
