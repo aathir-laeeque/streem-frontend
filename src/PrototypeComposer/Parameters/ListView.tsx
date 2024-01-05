@@ -4,7 +4,11 @@ import {
   ParameterVerificationTypeEnum,
   TargetEntityType,
 } from '#PrototypeComposer/checklist.types';
-import { ParameterTypeMap, TargetEntityTypeVisual } from '#PrototypeComposer/constants';
+import {
+  ParameterLabelByType,
+  ParameterTypeMap,
+  TargetEntityTypeVisual,
+} from '#PrototypeComposer/constants';
 import { TabPanelWrapper } from '#PrototypeComposer/styles';
 import { Button, DataTable, LoadingContainer, Pagination, Select, TextInput } from '#components';
 import { openOverlayAction } from '#components/OverlayContainer/actions';
@@ -15,7 +19,7 @@ import { FilterField, FilterOperators, fetchDataParams } from '#utils/globalType
 import { TabContentWrapper } from '#views/Jobs/ListView/styles';
 import { Search } from '@material-ui/icons';
 import { debounce } from 'lodash';
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC, useCallback, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import tickIcon from '../../assets/svg/tickIcon.svg';
 import Tooltip from '#components/shared/Tooltip';
@@ -174,6 +178,13 @@ const ParametersList: FC<{ isReadOnly: boolean }> = ({ isReadOnly }) => {
     );
   };
 
+  const parameterTypeFilter = useCallback((option, input) => {
+    if (input && !ParameterLabelByType[option.value].toLowerCase().includes(input.toLowerCase())) {
+      return false;
+    }
+    return true;
+  }, []);
+
   return (
     <TabPanelWrapper>
       <TabContentWrapper>
@@ -224,6 +235,7 @@ const ParametersList: FC<{ isReadOnly: boolean }> = ({ isReadOnly }) => {
               placeholder="Select Type"
               options={parameterOptions}
               hideSelectedOptions={false}
+              filterOption={parameterTypeFilter}
               isClearable={true}
               onChange={debounce(
                 (option) => updateFilterField('type', FilterOperators.EQ, option?.value),

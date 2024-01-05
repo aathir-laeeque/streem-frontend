@@ -39,6 +39,27 @@ export const ParameterIconByType = {
   [MandatoryParameter.FILE_UPLOAD]: <PublishOutlined />,
 };
 
+export const ParameterLabelByType = {
+  [MandatoryParameter.CHECKLIST]: 'Checklist',
+  [NonMandatoryParameter.INSTRUCTION]: 'Instruction',
+  [NonMandatoryParameter.MATERIAL]: 'Material',
+  [MandatoryParameter.MEDIA]: 'Image Capture',
+  [MandatoryParameter.MULTISELECT]: 'Multi-select dropdown',
+  [MandatoryParameter.SHOULD_BE]: 'Should Be',
+  [MandatoryParameter.SIGNATURE]: 'Signature',
+  [MandatoryParameter.SINGLE_SELECT]: 'Single-select dropdown',
+  [MandatoryParameter.SINGLE_LINE]: 'Single-line text',
+  [MandatoryParameter.MULTI_LINE]: 'Multi-line text',
+  [MandatoryParameter.YES_NO]: 'Yes/No',
+  [MandatoryParameter.NUMBER]: 'Number',
+  [MandatoryParameter.CALCULATION]: 'Calculation',
+  [MandatoryParameter.DATE]: 'Date',
+  [MandatoryParameter.DATE_TIME]: 'Date-Time',
+  [MandatoryParameter.RESOURCE]: 'Single Resource Selector',
+  [MandatoryParameter.MULTI_RESOURCE]: 'Multiple Resource Selector',
+  [MandatoryParameter.FILE_UPLOAD]: 'File Upload',
+};
+
 const ParameterLabelWrapper = styled.div`
   display: flex;
   align-items: center;
@@ -77,100 +98,109 @@ const RenderParameterLabel: React.FC<{ label: string; icon: JSX.Element }> = ({ 
 export const ParameterTypeMap: Record<string, JSX.Element | string> = {
   [MandatoryParameter.CHECKLIST]: (
     <RenderParameterLabel
-      label="Checklist"
+      label={ParameterLabelByType[MandatoryParameter.CHECKLIST]}
       icon={ParameterIconByType[MandatoryParameter.CHECKLIST]}
     />
   ),
   [NonMandatoryParameter.INSTRUCTION]: (
     <RenderParameterLabel
-      label="Instruction"
+      label={ParameterLabelByType[NonMandatoryParameter.INSTRUCTION]}
       icon={ParameterIconByType[NonMandatoryParameter.INSTRUCTION]}
     />
   ),
   [NonMandatoryParameter.MATERIAL]: (
     <RenderParameterLabel
-      label="Material"
+      label={ParameterLabelByType[NonMandatoryParameter.MATERIAL]}
       icon={ParameterIconByType[NonMandatoryParameter.MATERIAL]}
     />
   ),
   [MandatoryParameter.MEDIA]: (
     <RenderParameterLabel
-      label="Image Capture"
+      label={ParameterLabelByType[MandatoryParameter.MEDIA]}
       icon={ParameterIconByType[MandatoryParameter.MEDIA]}
     />
   ),
   [MandatoryParameter.MULTISELECT]: (
     <RenderParameterLabel
-      label="Multi-select dropdown"
+      label={ParameterLabelByType[MandatoryParameter.MULTISELECT]}
       icon={ParameterIconByType[MandatoryParameter.MULTISELECT]}
     />
   ),
   [MandatoryParameter.SHOULD_BE]: (
     <RenderParameterLabel
-      label="Should Be"
+      label={ParameterLabelByType[MandatoryParameter.SHOULD_BE]}
       icon={ParameterIconByType[MandatoryParameter.SHOULD_BE]}
     />
   ),
   [MandatoryParameter.SIGNATURE]: (
     <RenderParameterLabel
-      label="Signature"
+      label={ParameterLabelByType[MandatoryParameter.SIGNATURE]}
       icon={ParameterIconByType[MandatoryParameter.SIGNATURE]}
     />
   ),
   [MandatoryParameter.SINGLE_SELECT]: (
     <RenderParameterLabel
-      label="Single-select dropdown"
+      label={ParameterLabelByType[MandatoryParameter.SINGLE_SELECT]}
       icon={ParameterIconByType[MandatoryParameter.SINGLE_SELECT]}
     />
   ),
   [MandatoryParameter.SINGLE_LINE]: (
     <RenderParameterLabel
-      label="Single-line text"
+      label={ParameterLabelByType[MandatoryParameter.SINGLE_LINE]}
       icon={ParameterIconByType[MandatoryParameter.SINGLE_LINE]}
     />
   ),
   [MandatoryParameter.MULTI_LINE]: (
     <RenderParameterLabel
-      label="Multi-line text"
+      label={ParameterLabelByType[MandatoryParameter.MULTI_LINE]}
       icon={ParameterIconByType[MandatoryParameter.MULTI_LINE]}
     />
   ),
   [MandatoryParameter.YES_NO]: (
-    <RenderParameterLabel label="Yes/No" icon={ParameterIconByType[MandatoryParameter.YES_NO]} />
+    <RenderParameterLabel
+      label={ParameterLabelByType[MandatoryParameter.YES_NO]}
+      icon={ParameterIconByType[MandatoryParameter.YES_NO]}
+    />
   ),
   [MandatoryParameter.NUMBER]: (
-    <RenderParameterLabel label="Number" icon={ParameterIconByType[MandatoryParameter.NUMBER]} />
+    <RenderParameterLabel
+      label={ParameterLabelByType[MandatoryParameter.NUMBER]}
+      icon={ParameterIconByType[MandatoryParameter.NUMBER]}
+    />
   ),
   [MandatoryParameter.CALCULATION]: (
     <RenderParameterLabel
-      label="Calculation"
+      label={ParameterLabelByType[MandatoryParameter.CALCULATION]}
       icon={ParameterIconByType[MandatoryParameter.CALCULATION]}
     />
   ),
   [MandatoryParameter.DATE]: (
-    <RenderParameterLabel label="Date" icon={ParameterIconByType[MandatoryParameter.DATE]} />
+    <RenderParameterLabel
+      label={ParameterLabelByType[MandatoryParameter.DATE]}
+      icon={ParameterIconByType[MandatoryParameter.DATE]}
+    />
   ),
   [MandatoryParameter.DATE_TIME]: (
     <RenderParameterLabel
-      label="Date-Time"
+      label={ParameterLabelByType[MandatoryParameter.DATE_TIME]}
       icon={ParameterIconByType[MandatoryParameter.DATE_TIME]}
     />
   ),
   [MandatoryParameter.RESOURCE]: (
     <RenderParameterLabel
-      label="Single Resource Selector"
+      label={ParameterLabelByType[MandatoryParameter.RESOURCE]}
       icon={ParameterIconByType[MandatoryParameter.RESOURCE]}
     />
   ),
   [MandatoryParameter.MULTI_RESOURCE]: (
     <RenderParameterLabel
-      label="Multiple Resource Selector"
+      label={ParameterLabelByType[MandatoryParameter.MULTI_RESOURCE]}
       icon={ParameterIconByType[MandatoryParameter.MULTI_RESOURCE]}
     />
   ),
   [MandatoryParameter.FILE_UPLOAD]: (
     <RenderParameterLabel
-      label="File Upload"
+      label={ParameterLabelByType[MandatoryParameter.FILE_UPLOAD]}
       icon={ParameterIconByType[MandatoryParameter.FILE_UPLOAD]}
     />
   ),
