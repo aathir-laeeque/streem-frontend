@@ -481,6 +481,13 @@ export const getTaskExceptionDetails = (task, stageOrderTree) => {
       });
     }
 
+    if (taskExecution?.schedulePrematureStartReason) {
+      addException({
+        exception: 'Early start for scheduled task',
+        reason: taskExecution.schedulePrematureStartReason,
+      });
+    }
+
     if (taskExecution?.scheduleOverdueCompletionReason) {
       addException({
         exception: 'Delayed completion for scheduled task',

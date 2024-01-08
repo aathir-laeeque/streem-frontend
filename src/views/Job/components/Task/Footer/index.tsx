@@ -23,8 +23,6 @@ import React, { FC } from 'react';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 import { getEpochTimeDifference } from '#utils/timeUtils';
-import { showNotification } from '#components/Notification/actions';
-import { NotificationType } from '#components/Notification/types';
 
 const Wrapper = styled.div.attrs({
   className: 'task-buttons',
@@ -446,7 +444,11 @@ const Footer: FC<FooterProps> = ({ task }) => {
     }
   };
 
-  const onStartTask = (recurringPrematureStartReason: string = '') => {
+  const onStartTask = (params?: {
+    recurringPrematureStartReason?: string;
+    schedulePrematureStartReason?: string;
+  }) => {
+    const { recurringPrematureStartReason, schedulePrematureStartReason = '' } = params || {};
     const handleStartTask = (createObjectAutomation: any[] = []) => {
       dispatch(
         jobActions.performTaskAction({
@@ -456,7 +458,8 @@ const Footer: FC<FooterProps> = ({ task }) => {
           ...(createObjectAutomation.length > 0 && {
             createObjectAutomations: createObjectAutomation,
           }),
-          ...(recurringPrematureStartReason && { recurringPrematureStartReason }),
+          recurringPrematureStartReason,
+          schedulePrematureStartReason,
         }),
       );
     };
@@ -608,9 +611,17 @@ const Footer: FC<FooterProps> = ({ task }) => {
                 getEpochTimeDifference(schedulingExpectedStartedAt) === 'EARLY'
               ) {
                 dispatch(
-                  showNotification({
-                    type: NotificationType.ERROR,
-                    msg: 'Task cannot be started before its scheduled start time.',
+                  openOverlayAction({
+                    type: OverlayNames.REASON_MODAL,
+                    props: {
+                      modalTitle: 'Start the Task',
+                      modalDesc:
+                        'Are you sure you want to start the task before it’s start time ? Please provide a reason for it.',
+                      onSubmitHandler: (reason: string, closeModal: () => void) => {
+                        onStartTask({ schedulePrematureStartReason: reason });
+                        closeModal();
+                      },
+                    },
                   }),
                 );
               } else if (
@@ -625,9 +636,9 @@ const Footer: FC<FooterProps> = ({ task }) => {
                       modalTitle: 'Start the Task',
                       modalDesc:
                         'Are you sure you want to start the task before it’s start time ? Please provide a reason for it.',
-                      onSubmitHandler: (reason: string) => {
-                        onStartTask(reason);
-                        dispatch(closeOverlayAction(OverlayNames.REASON_MODAL));
+                      onSubmitHandler: (reason: string, closeModal: () => void) => {
+                        onStartTask({ recurringPrematureStartReason: reason });
+                        closeModal();
                       },
                     },
                   }),

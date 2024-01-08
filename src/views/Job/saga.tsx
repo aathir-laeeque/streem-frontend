@@ -273,6 +273,7 @@ function* performTaskActionSaga({ payload }: ReturnType<typeof jobActions.perfor
       recurringOverdueCompletionReason,
       recurringPrematureStartReason,
       scheduleOverdueCompletionReason,
+      schedulePrematureStartReason,
       openAutomationModal,
     } = payload;
 
@@ -324,6 +325,7 @@ function* performTaskActionSaga({ payload }: ReturnType<typeof jobActions.perfor
                 recurringOverdueCompletionReason,
                 recurringPrematureStartReason,
                 scheduleOverdueCompletionReason,
+                schedulePrematureStartReason,
               }),
           ...(isCompleteAction && {
             parameters: getParametersDataByTaskId(task, parameters, id),

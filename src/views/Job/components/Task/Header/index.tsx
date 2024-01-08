@@ -56,6 +56,7 @@ const Header: FC<HeaderProps> = ({ task, stage }) => {
       recurringExpectedDueAt,
       schedulingExpectedStartedAt,
       schedulingExpectedDueAt,
+      schedulePrematureStartReason,
       scheduleOverdueCompletionReason,
       scheduleTaskSummary,
       startedBy,
@@ -486,14 +487,22 @@ const Header: FC<HeaderProps> = ({ task, stage }) => {
             />
           )}
 
-          {recurringPrematureStartReason && (
+          {(recurringPrematureStartReason || schedulePrematureStartReason) && (
             <ReasonTag
               startedBy={startedBy}
               startedAt={startedAt}
-              reason={recurringPrematureStartReason}
+              reason={recurringPrematureStartReason || schedulePrematureStartReason}
               reasonType="start"
-              modalTitle="Early start for recurring task"
-              badgeText="Early start for recurring task"
+              modalTitle={
+                recurringPrematureStartReason
+                  ? 'Early start for recurring task'
+                  : 'Early start for scheduled task'
+              }
+              badgeText={
+                recurringPrematureStartReason
+                  ? 'Early start for recurring task'
+                  : 'Early start for scheduled task'
+              }
             />
           )}
 

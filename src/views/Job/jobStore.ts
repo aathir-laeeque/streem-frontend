@@ -49,6 +49,7 @@ const actions = {
     recurringOverdueCompletionReason?: string;
     recurringPrematureStartReason?: string;
     scheduleOverdueCompletionReason?: string;
+    schedulePrematureStartReason?: string;
     openAutomationModal?: any;
   },
   repeatTask: {} as { id: string },
