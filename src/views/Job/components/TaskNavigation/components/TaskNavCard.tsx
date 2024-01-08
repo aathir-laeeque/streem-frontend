@@ -6,7 +6,7 @@ import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 import taskRecurrenceIcon from '#assets/svg/task-recurrence-icon.svg';
 import AccordianIcon from '#assets/svg/accordianIcon.svg';
-import repeatIcon from '#assets/svg/repeatIcon.svg';
+import repeatTaskIcon from '#assets/svg/repeat-task.svg';
 import taskRecurrenceIconDisabled from '#assets/svg/task-recurrence-grey.svg';
 import arrowIcon from '#assets/svg/arrow-background.svg';
 import Tooltip from '#components/shared/Tooltip';
@@ -282,7 +282,7 @@ const TaskNavCard: FC<{ task: any; taskNo: number; errors: string[]; stageNo: nu
                               textAlignment="left"
                             >
                               <span>
-                                <img src={repeatIcon} style={{ marginRight: '4px' }} />
+                                <img src={repeatTaskIcon} style={{ marginRight: '4px' }} />
                               </span>
                             </Tooltip>
                           ) : null}

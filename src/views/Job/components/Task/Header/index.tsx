@@ -15,11 +15,12 @@ import { Wrapper } from './styles';
 import { useTypedSelector } from '#store';
 import checkPermission from '#services/uiPermissions';
 import Timer from '#views/Job/components/Task/Timer';
-import repeatTaskIcon from '#assets/svg/repeatIcon.svg';
+import configureActionsIcon from '#assets/svg/configure-actions.svg';
 import taskRecurrenceIcon from '#assets/svg/task-recurrence-icon.svg';
 import taskRecurrenceIconDisabled from '#assets/svg/task-recurrence-grey.svg';
 import Tooltip from '#components/shared/Tooltip';
 import scheduleTaskIcon from '#assets/svg/schedule-icon-black.svg';
+import repeatTaskIcon from '#assets/svg/repeat-task.svg';
 import ReasonTag from './ReasonTag';
 import { Error as ErrorIcon } from '@material-ui/icons';
 
@@ -216,7 +217,7 @@ const Header: FC<HeaderProps> = ({ task, stage }) => {
                 style={{ display: 'flex', cursor: 'pointer', gap: '10px', color: '#1D84FF' }}
               >
                 <Tooltip title={'Automation Task'} arrow>
-                  <img src={repeatTaskIcon} />
+                  <img src={configureActionsIcon} />
                 </Tooltip>
                 <span style={{ margin: '5px' }}>Automations ({task.automations.length})</span>
               </div>
