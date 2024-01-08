@@ -1,4 +1,4 @@
-export const DEFAULT_VALUE = 'N/A';
+export const DEFAULT_VALUE = 'N/A ';
 
 export const TaskState = {
   COMPLETED: 'Completed',
