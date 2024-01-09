@@ -286,7 +286,7 @@ const TaskNavCard: FC<{ task: any; taskNo: number; errors: string[]; stageNo: nu
                               </span>
                             </Tooltip>
                           ) : null}
-                          {enableScheduling ? (
+                          {enableScheduling && type === TaskExecutionType.MASTER ? (
                             <span>
                               {!isTaskStarted &&
                               enableScheduling &&
