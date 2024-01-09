@@ -447,15 +447,19 @@ function* performTaskActionSaga({ payload }: ReturnType<typeof jobActions.perfor
       );
     }
 
-    if (task?.enableRecurrence && taskExecution?.continueRecurrence) {
-      if (isCompleteAction && data?.continueRecurrence) {
+    if (
+      task?.enableRecurrence &&
+      taskExecution?.continueRecurrence &&
+      action === TaskAction.COMPLETE
+    ) {
+      if (data?.continueRecurrence) {
         yield put(
           showNotification({
             type: NotificationType.SUCCESS,
             msg: 'Recurring Task created successfully',
           }),
         );
-      } else if (isCompleteAction && !data?.continueRecurrence) {
+      } else if (!data?.continueRecurrence) {
         yield put(
           showNotification({
             type: NotificationType.SUCCESS,
